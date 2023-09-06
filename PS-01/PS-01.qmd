@@ -1,0 +1,65 @@
+---
+title: "PS #01"
+format: html
+
+---
+
+## Problem 1 - Wine data
+
+### a.
+
+First, import the data from `wine.data` to the `wine_df`
+
+```{r}
+wine_df <- read.csv("~/桌面/Stats-506/PS-01/wine.data",header=FALSE)
+```
+
+Then, give appropriate column names to the `wine_df`
+
+```{r}
+colnames(wine_df) <- c('class','Alcohol','Malic acid','Ash','Alcalinity of ash','Magnesium','Total phenols','Flavanoids','Nonflavanoid phenols',
+'Proanthocyanins','Color intensity','Hue','OD280/OD315 of diluted wines','Proline')
+```
+
+This shows the first 10 rows of the `wine_df`:
+
+```{r}
+#| echo: false
+wine_df[1:10,]
+```
+
+### b.
+
+Next, check the number of wines within each class:
+
+```{r}
+table(wine_df$class)
+```
+
+This is exactly the same as in `wine.names`
+
+### c.
+
+The wine with the highest alcohol content belongs to class 1:
+
+```{r}
+wine_df[which.max(wine_df$Alcohol),]$class
+```
+
+The wine with the highest alcohol content belongs to class 2:
+
+```{r}
+wine_df[which.min(wine_df$Alcohol),]$class
+```
+
+  26 wines have higher levels of magnesium than 114 mg/l of magnesium:
+
+```{r}
+sum(wine_df$Magnesium>114)
+```
+
+15 class one, 6 class two and 5 class three have higher levels of magnesium than average German beer:
+
+```{r}
+table(wine_df[which(wine_df$Magnesium>114),]$class)
+```
