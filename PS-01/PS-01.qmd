@@ -109,7 +109,7 @@ t.test(wine_df[which(wine_df$class==1),"Ash"],wine_df[which(wine_df$class==2),"A
 ```
 
 
-Repeat the steps for class 1 and class 3
+Repeat the steps for class 1 and class 3:
 ```{r}
 ts_13<-abs((wine_df_mean[1]-wine_df_mean[3])/sqrt(wine_df_var[1]/num_class[1]+wine_df_var[3]/num_class[3]))
 df_13<-(wine_df_var[1]/num_class[1]+wine_df_var[3]/num_class[3])^2/((wine_df_var[1]/num_class[1])^2/(num_class[1]-1)+(wine_df_var[3]/num_class[3])^2/(num_class[3]-1))
@@ -121,7 +121,7 @@ p-value equals `r pt_13`,we cannot say that the level of Ash differs across the 
 t.test(wine_df[which(wine_df$class==1),"Ash"],wine_df[which(wine_df$class==3),"Ash"],alternative = "two.sided")
 ```
 
-Repeat the steps for class 2 and class 3
+Repeat the steps for class 2 and class 3:
 ```{r}
 ts_23<-abs((wine_df_mean[2]-wine_df_mean[3])/sqrt(wine_df_var[2]/num_class[2]+wine_df_var[3]/num_class[3]))
 df_23<-(wine_df_var[2]/num_class[2]+wine_df_var[3]/num_class[3])^2/((wine_df_var[2]/num_class[2])^2/(num_class[2]-1)+(wine_df_var[3]/num_class[3])^2/(num_class[3]-1))
@@ -131,4 +131,50 @@ p-value equals `r pt_13`,the level of Ash differs across the class 1 and class 3
 ```{r}
 #| echo: false
 t.test(wine_df[which(wine_df$class==2),"Ash"],wine_df[which(wine_df$class==3),"Ash"])
+```
+## Problem 2 - Perfect Powers
+### a.
+```{r}
+# Function to find the root of a given number and power if exists
+isPerfectPower <- function(num, power){
+  # Begin with root equals 1
+  root <- 1
+  # Loop until the result reach power
+  while (root^power <= num){
+    
+    if (root^power == num){
+      # If root exists, return TRUE and the root
+      return(list(isPerfect = TRUE, root = root))
+    }
+    root <- root + 1
+  }
+  # If root does not exist, return FALSE and NA
+  return(list(isPerfect = FALSE, root = NA))
+}
+```
+
+```{r}
+#| echo: false
+isPerfectPower(27, power = 3)
+```
+### b.
+```{r}
+findRootPower <- function(num){
+  # Start frow the lowerst power 2
+  for (power in 2:100){
+    if (isPerfectPower(num, power)$isPerfect == TRUE){
+      # If root exists for this power, return the expression
+      return (sprintf("%.0f = %.0f ^ %.0f", num, isPerfectPower(num, power)$root, power))
+    }
+  }
+  # If under power 100, there is still no root, return not a perfect power
+  return (sprintf("%.0f is not a perfect power", num))
+}
+```
+
+Next, take in some numbers to test the function:
+```{r}
+#| echo: false
+test_num <- c(27, 13060694016, 7776, 170859375, 58247422, 94143178827)
+lapply(test_num, findRootPower)
 ```

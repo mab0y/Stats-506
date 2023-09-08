@@ -261,7 +261,7 @@ mean of x mean of y
  2.455593  2.244789 </code></pre>
 </div>
 </div>
-<p>Repeat the steps for class 1 and class 3</p>
+<p>Repeat the steps for class 1 and class 3:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>ts_13<span class="ot">&lt;-</span><span class="fu">abs</span>((wine_df_mean[<span class="dv">1</span>]<span class="sc">-</span>wine_df_mean[<span class="dv">3</span>])<span class="sc">/</span><span class="fu">sqrt</span>(wine_df_var[<span class="dv">1</span>]<span class="sc">/</span>num_class[<span class="dv">1</span>]<span class="sc">+</span>wine_df_var[<span class="dv">3</span>]<span class="sc">/</span>num_class[<span class="dv">3</span>]))</span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>df_13<span class="ot">&lt;-</span>(wine_df_var[<span class="dv">1</span>]<span class="sc">/</span>num_class[<span class="dv">1</span>]<span class="sc">+</span>wine_df_var[<span class="dv">3</span>]<span class="sc">/</span>num_class[<span class="dv">3</span>])<span class="sc">^</span><span class="dv">2</span><span class="sc">/</span>((wine_df_var[<span class="dv">1</span>]<span class="sc">/</span>num_class[<span class="dv">1</span>])<span class="sc">^</span><span class="dv">2</span><span class="sc">/</span>(num_class[<span class="dv">1</span>]<span class="sc">-</span><span class="dv">1</span>)<span class="sc">+</span>(wine_df_var[<span class="dv">3</span>]<span class="sc">/</span>num_class[<span class="dv">3</span>])<span class="sc">^</span><span class="dv">2</span><span class="sc">/</span>(num_class[<span class="dv">3</span>]<span class="sc">-</span><span class="dv">1</span>))</span>
@@ -283,7 +283,7 @@ mean of x mean of y
  2.455593  2.437083 </code></pre>
 </div>
 </div>
-<p>Repeat the steps for class 2 and class 3</p>
+<p>Repeat the steps for class 2 and class 3:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>ts_23<span class="ot">&lt;-</span><span class="fu">abs</span>((wine_df_mean[<span class="dv">2</span>]<span class="sc">-</span>wine_df_mean[<span class="dv">3</span>])<span class="sc">/</span><span class="fu">sqrt</span>(wine_df_var[<span class="dv">2</span>]<span class="sc">/</span>num_class[<span class="dv">2</span>]<span class="sc">+</span>wine_df_var[<span class="dv">3</span>]<span class="sc">/</span>num_class[<span class="dv">3</span>]))</span>
 <span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>df_23<span class="ot">&lt;-</span>(wine_df_var[<span class="dv">2</span>]<span class="sc">/</span>num_class[<span class="dv">2</span>]<span class="sc">+</span>wine_df_var[<span class="dv">3</span>]<span class="sc">/</span>num_class[<span class="dv">3</span>])<span class="sc">^</span><span class="dv">2</span><span class="sc">/</span>((wine_df_var[<span class="dv">2</span>]<span class="sc">/</span>num_class[<span class="dv">2</span>])<span class="sc">^</span><span class="dv">2</span><span class="sc">/</span>(num_class[<span class="dv">2</span>]<span class="sc">-</span><span class="dv">1</span>)<span class="sc">+</span>(wine_df_var[<span class="dv">3</span>]<span class="sc">/</span>num_class[<span class="dv">3</span>])<span class="sc">^</span><span class="dv">2</span><span class="sc">/</span>(num_class[<span class="dv">3</span>]<span class="sc">-</span><span class="dv">1</span>))</span>
@@ -305,6 +305,80 @@ mean of x mean of y
  2.244789  2.437083 </code></pre>
 </div>
 </div>
+</section>
+</section>
+<section id="problem-2---perfect-powers" class="level2">
+<h2 class="anchored" data-anchor-id="problem-2---perfect-powers">Problem 2 - Perfect Powers</h2>
+<section id="a.-1" class="level3">
+<h3 class="anchored" data-anchor-id="a.-1">a.</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Function to find the root of a given number and power if exists</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>isPerfectPower <span class="ot">&lt;-</span> <span class="cf">function</span>(num, power){</span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Begin with root equals 1</span></span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>  root <span class="ot">&lt;-</span> <span class="dv">1</span></span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Loop until the result reach power</span></span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>  <span class="cf">while</span> (root<span class="sc">^</span>power <span class="sc">&lt;=</span> num){</span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (root<span class="sc">^</span>power <span class="sc">==</span> num){</span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a>      <span class="co"># If root exists, return TRUE and the root</span></span>
+<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a>      <span class="fu">return</span>(<span class="fu">list</span>(<span class="at">isPerfect =</span> <span class="cn">TRUE</span>, <span class="at">root =</span> root))</span>
+<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb25-12"><a href="#cb25-12" aria-hidden="true" tabindex="-1"></a>    root <span class="ot">&lt;-</span> root <span class="sc">+</span> <span class="dv">1</span></span>
+<span id="cb25-13"><a href="#cb25-13" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb25-14"><a href="#cb25-14" aria-hidden="true" tabindex="-1"></a>  <span class="co"># If root does not exist, return FALSE and NA</span></span>
+<span id="cb25-15"><a href="#cb25-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="fu">list</span>(<span class="at">isPerfect =</span> <span class="cn">FALSE</span>, <span class="at">root =</span> <span class="cn">NA</span>))</span>
+<span id="cb25-16"><a href="#cb25-16" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>$isPerfect
+[1] TRUE
+
+$root
+[1] 3</code></pre>
+</div>
+</div>
+</section>
+<section id="b.-1" class="level3">
+<h3 class="anchored" data-anchor-id="b.-1">b.</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>findRootPower <span class="ot">&lt;-</span> <span class="cf">function</span>(num){</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Start frow the lowerst power 2</span></span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (power <span class="cf">in</span> <span class="dv">2</span><span class="sc">:</span><span class="dv">100</span>){</span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (<span class="fu">isPerfectPower</span>(num, power)<span class="sc">$</span>isPerfect <span class="sc">==</span> <span class="cn">TRUE</span>){</span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>      <span class="co"># If root exists for this power, return the expression</span></span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>      <span class="fu">return</span> (<span class="fu">sprintf</span>(<span class="st">"%.0f = %.0f ^ %.0f"</span>, num, <span class="fu">isPerfectPower</span>(num, power)<span class="sc">$</span>root, power))</span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a>  <span class="co"># If under power 100, there is still no root, return not a perfect power</span></span>
+<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span> (<span class="fu">sprintf</span>(<span class="st">"%.0f is not a perfect power"</span>, num))</span>
+<span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Next, take in some numbers to test the function:</p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>[[1]]
+[1] "27 = 3 ^ 3"
+
+[[2]]
+[1] "13060694016 = 6 ^ 13"
+
+[[3]]
+[1] "7776 = 6 ^ 5"
+
+[[4]]
+[1] "170859375 = 15 ^ 7"
+
+[[5]]
+[1] "58247422 is not a perfect power"
+
+[[6]]
+[1] "94143178827 = 3 ^ 23"</code></pre>
+</div>
+</div>
+<blockquote class="blockquote">
+<p>Blowk</p>
+</blockquote>
 </section>
 </section>
 
