@@ -163,14 +163,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h3 class="anchored" data-anchor-id="c.">c.</h3>
 <p>The wine with the highest alcohol content belongs to class 1:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>wine_df[<span class="fu">which.max</span>(wine_df<span class="sc">$</span>Alcohol),]<span class="sc">$</span>class</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>wine_df[<span class="fu">which.max</span>(wine_df<span class="sc">$</span>Alcohol),<span class="st">"class"</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 1</code></pre>
 </div>
 </div>
 <p>The wine with the highest alcohol content belongs to class 2:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>wine_df[<span class="fu">which.min</span>(wine_df<span class="sc">$</span>Alcohol),]<span class="sc">$</span>class</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>wine_df[<span class="fu">which.min</span>(wine_df<span class="sc">$</span>Alcohol),<span class="st">"class"</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 2</code></pre>
 </div>
@@ -184,11 +184,125 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <p>15 class one, 6 class two and 5 class three have higher levels of magnesium than average German beer:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(wine_df[<span class="fu">which</span>(wine_df<span class="sc">$</span>Magnesium<span class="sc">&gt;</span><span class="dv">114</span>),]<span class="sc">$</span>class)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(wine_df[<span class="fu">which</span>(wine_df<span class="sc">$</span>Magnesium<span class="sc">&gt;</span><span class="dv">114</span>),<span class="st">"class"</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
  1  2  3 
 15  6  5 </code></pre>
+</div>
+</div>
+</section>
+<section id="d." class="level3">
+<h3 class="anchored" data-anchor-id="d.">d.</h3>
+<p>First, calculate mean of overall dataframe and of each class:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>avg_overall<span class="ot">&lt;-</span><span class="fu">lapply</span>(wine_df,mean)</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>avg_1<span class="ot">&lt;-</span><span class="fu">lapply</span>(wine_df[<span class="fu">which</span>(wine_df<span class="sc">$</span>class<span class="sc">==</span><span class="dv">1</span>),],mean)</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>avg_2<span class="ot">&lt;-</span><span class="fu">lapply</span>(wine_df[<span class="fu">which</span>(wine_df<span class="sc">$</span>class<span class="sc">==</span><span class="dv">2</span>),],mean)</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>avg_3<span class="ot">&lt;-</span><span class="fu">lapply</span>(wine_df[<span class="fu">which</span>(wine_df<span class="sc">$</span>class<span class="sc">==</span><span class="dv">3</span>),],mean)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Then use map to combine the lists, change it to data.frame object and change the name of rows <code>https://stackoverflow.com/questions/60605598/r-combine-two-lists-with-same-column-names</code>: helped me figure out to use Map to combine the lists</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>avg_combine<span class="ot">&lt;-</span><span class="fu">Map</span>(c,avg_overall,avg_1,avg_2,avg_3)</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>avg_combine<span class="ot">&lt;-</span><span class="fu">data.frame</span>(avg_combine)</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="fu">rownames</span>(avg_combine)<span class="ot">&lt;-</span><span class="fu">c</span>(<span class="st">"Overall"</span>,<span class="st">"Class 1"</span>,<span class="st">"Class 2"</span>,<span class="st">"Class 3"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>           class  Alcohol Malic.acid      Ash Alcalinity.of.ash Magnesium
+Overall 1.938202 13.00062   2.336348 2.366517          19.49494  99.74157
+Class 1 1.000000 13.74475   2.010678 2.455593          17.03729 106.33898
+Class 2 2.000000 12.27873   1.932676 2.244789          20.23803  94.54930
+Class 3 3.000000 13.15375   3.333750 2.437083          21.41667  99.31250
+        Total.phenols Flavanoids Nonflavanoid.phenols Proanthocyanins
+Overall      2.295112  2.0292697            0.3618539        1.590899
+Class 1      2.840169  2.9823729            0.2900000        1.899322
+Class 2      2.258873  2.0808451            0.3636620        1.630282
+Class 3      1.678750  0.7814583            0.4475000        1.153542
+        Color.intensity       Hue OD280.OD315.of.diluted.wines   Proline
+Overall        5.058090 0.9574494                     2.611685  746.8933
+Class 1        5.528305 1.0620339                     3.157797 1115.7119
+Class 2        3.086620 1.0562817                     2.785352  519.5070
+Class 3        7.396250 0.6827083                     1.683542  629.8958</code></pre>
+</div>
+</div>
+</section>
+<section id="e." class="level3">
+<h3 class="anchored" data-anchor-id="e.">e.</h3>
+<p>First, calculate number of sample from each class</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>num_class <span class="ot">&lt;-</span> <span class="fu">table</span>(wine_df<span class="sc">$</span>class)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Then, calculate mean and variance for each class</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>wine_df_mean <span class="ot">&lt;-</span> <span class="fu">tapply</span>(wine_df<span class="sc">$</span>Ash,wine_df<span class="sc">$</span>class,mean)</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>wine_df_var <span class="ot">&lt;-</span> <span class="fu">tapply</span>(wine_df<span class="sc">$</span>Ash,wine_df<span class="sc">$</span>class,var)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Next,calculate t-stats, degree of freedom and p-value for class 1 and class 2</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>ts_12<span class="ot">&lt;-</span><span class="fu">abs</span>((wine_df_mean[<span class="dv">1</span>]<span class="sc">-</span>wine_df_mean[<span class="dv">2</span>])<span class="sc">/</span><span class="fu">sqrt</span>(wine_df_var[<span class="dv">1</span>]<span class="sc">/</span>num_class[<span class="dv">1</span>]<span class="sc">+</span>wine_df_var[<span class="dv">2</span>]<span class="sc">/</span>num_class[<span class="dv">2</span>]))</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>df_12<span class="ot">&lt;-</span>(wine_df_var[<span class="dv">1</span>]<span class="sc">/</span>num_class[<span class="dv">1</span>]<span class="sc">+</span>wine_df_var[<span class="dv">2</span>]<span class="sc">/</span>num_class[<span class="dv">2</span>])<span class="sc">^</span><span class="dv">2</span><span class="sc">/</span>((wine_df_var[<span class="dv">1</span>]<span class="sc">/</span>num_class[<span class="dv">1</span>])<span class="sc">^</span><span class="dv">2</span><span class="sc">/</span>(num_class[<span class="dv">1</span>]<span class="sc">-</span><span class="dv">1</span>)<span class="sc">+</span>(wine_df_var[<span class="dv">2</span>]<span class="sc">/</span>num_class[<span class="dv">2</span>])<span class="sc">^</span><span class="dv">2</span><span class="sc">/</span>(num_class[<span class="dv">2</span>]<span class="sc">-</span><span class="dv">1</span>))</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>pt_12<span class="ot">&lt;-</span><span class="dv">2</span><span class="sc">*</span><span class="fu">pt</span>(ts_12, df_12,<span class="at">lower.tail=</span><span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>p-value equals 2.1243414^{-5},the level of Ash differs across the class 1 and class 2 at the 95% confidence level.</p>
+<p>Finally, use built-in t-test method to verify the result:</p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    Welch Two Sample t-test
+
+data:  wine_df[which(wine_df$class == 1), "Ash"] and wine_df[which(wine_df$class == 2), "Ash"]
+t = 4.4184, df = 125.59, p-value = 2.124e-05
+alternative hypothesis: true difference in means is not equal to 0
+95 percent confidence interval:
+ 0.116383 0.305226
+sample estimates:
+mean of x mean of y 
+ 2.455593  2.244789 </code></pre>
+</div>
+</div>
+<p>Repeat the steps for class 1 and class 3</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>ts_13<span class="ot">&lt;-</span><span class="fu">abs</span>((wine_df_mean[<span class="dv">1</span>]<span class="sc">-</span>wine_df_mean[<span class="dv">3</span>])<span class="sc">/</span><span class="fu">sqrt</span>(wine_df_var[<span class="dv">1</span>]<span class="sc">/</span>num_class[<span class="dv">1</span>]<span class="sc">+</span>wine_df_var[<span class="dv">3</span>]<span class="sc">/</span>num_class[<span class="dv">3</span>]))</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>df_13<span class="ot">&lt;-</span>(wine_df_var[<span class="dv">1</span>]<span class="sc">/</span>num_class[<span class="dv">1</span>]<span class="sc">+</span>wine_df_var[<span class="dv">3</span>]<span class="sc">/</span>num_class[<span class="dv">3</span>])<span class="sc">^</span><span class="dv">2</span><span class="sc">/</span>((wine_df_var[<span class="dv">1</span>]<span class="sc">/</span>num_class[<span class="dv">1</span>])<span class="sc">^</span><span class="dv">2</span><span class="sc">/</span>(num_class[<span class="dv">1</span>]<span class="sc">-</span><span class="dv">1</span>)<span class="sc">+</span>(wine_df_var[<span class="dv">3</span>]<span class="sc">/</span>num_class[<span class="dv">3</span>])<span class="sc">^</span><span class="dv">2</span><span class="sc">/</span>(num_class[<span class="dv">3</span>]<span class="sc">-</span><span class="dv">1</span>))</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>pt_13<span class="ot">&lt;-</span><span class="dv">2</span><span class="sc">*</span><span class="fu">pt</span>(ts_13, df_13,<span class="at">lower.tail=</span><span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>p-value equals 0.642973,we cannot say that the level of Ash differs across the class 1 and class 3 at the 95% confidence level.</p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    Welch Two Sample t-test
+
+data:  wine_df[which(wine_df$class == 1), "Ash"] and wine_df[which(wine_df$class == 3), "Ash"]
+t = 0.46489, df = 105, p-value = 0.643
+alternative hypothesis: true difference in means is not equal to 0
+95 percent confidence interval:
+ -0.06043717  0.09745695
+sample estimates:
+mean of x mean of y 
+ 2.455593  2.437083 </code></pre>
+</div>
+</div>
+<p>Repeat the steps for class 2 and class 3</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>ts_23<span class="ot">&lt;-</span><span class="fu">abs</span>((wine_df_mean[<span class="dv">2</span>]<span class="sc">-</span>wine_df_mean[<span class="dv">3</span>])<span class="sc">/</span><span class="fu">sqrt</span>(wine_df_var[<span class="dv">2</span>]<span class="sc">/</span>num_class[<span class="dv">2</span>]<span class="sc">+</span>wine_df_var[<span class="dv">3</span>]<span class="sc">/</span>num_class[<span class="dv">3</span>]))</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>df_23<span class="ot">&lt;-</span>(wine_df_var[<span class="dv">2</span>]<span class="sc">/</span>num_class[<span class="dv">2</span>]<span class="sc">+</span>wine_df_var[<span class="dv">3</span>]<span class="sc">/</span>num_class[<span class="dv">3</span>])<span class="sc">^</span><span class="dv">2</span><span class="sc">/</span>((wine_df_var[<span class="dv">2</span>]<span class="sc">/</span>num_class[<span class="dv">2</span>])<span class="sc">^</span><span class="dv">2</span><span class="sc">/</span>(num_class[<span class="dv">2</span>]<span class="sc">-</span><span class="dv">1</span>)<span class="sc">+</span>(wine_df_var[<span class="dv">3</span>]<span class="sc">/</span>num_class[<span class="dv">3</span>])<span class="sc">^</span><span class="dv">2</span><span class="sc">/</span>(num_class[<span class="dv">3</span>]<span class="sc">-</span><span class="dv">1</span>))</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>pt_23<span class="ot">&lt;-</span><span class="dv">2</span><span class="sc">*</span><span class="fu">pt</span>(ts_23, df_23,<span class="at">lower.tail=</span><span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>p-value equals 0.642973,the level of Ash differs across the class 1 and class 3 at the 95% confidence level.</p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    Welch Two Sample t-test
+
+data:  wine_df[which(wine_df$class == 2), "Ash"] and wine_df[which(wine_df$class == 3), "Ash"]
+t = -4.184, df = 114.96, p-value = 5.627e-05
+alternative hypothesis: true difference in means is not equal to 0
+95 percent confidence interval:
+ -0.2833328 -0.1012564
+sample estimates:
+mean of x mean of y 
+ 2.244789  2.437083 </code></pre>
 </div>
 </div>
 </section>

@@ -43,13 +43,13 @@ This is exactly the same as in `wine.names`
 The wine with the highest alcohol content belongs to class 1:
 
 ```{r}
-wine_df[which.max(wine_df$Alcohol),]$class
+wine_df[which.max(wine_df$Alcohol),"class"]
 ```
 
 The wine with the highest alcohol content belongs to class 2:
 
 ```{r}
-wine_df[which.min(wine_df$Alcohol),]$class
+wine_df[which.min(wine_df$Alcohol),"class"]
 ```
 
   26 wines have higher levels of magnesium than 114 mg/l of magnesium:
@@ -61,5 +61,74 @@ sum(wine_df$Magnesium>114)
 15 class one, 6 class two and 5 class three have higher levels of magnesium than average German beer:
 
 ```{r}
-table(wine_df[which(wine_df$Magnesium>114),]$class)
+table(wine_df[which(wine_df$Magnesium>114),"class"])
+```
+
+### d.
+First, calculate mean of overall dataframe and of each class:
+```{r}
+avg_overall<-lapply(wine_df,mean)
+avg_1<-lapply(wine_df[which(wine_df$class==1),],mean)
+avg_2<-lapply(wine_df[which(wine_df$class==2),],mean)
+avg_3<-lapply(wine_df[which(wine_df$class==3),],mean)
+```
+Then use map to combine the lists, change it to data.frame object and change the name of rows
+`https://stackoverflow.com/questions/60605598/r-combine-two-lists-with-same-column-names`: helped me figure out to use Map to combine the lists
+```{r}
+avg_combine<-Map(c,avg_overall,avg_1,avg_2,avg_3)
+avg_combine<-data.frame(avg_combine)
+rownames(avg_combine)<-c("Overall","Class 1","Class 2","Class 3")
+```
+```{r}
+#| echo: false
+avg_combine
+```
+### e.
+First, calculate number of sample from each class
+```{r}
+num_class <- table(wine_df$class)
+```
+Then, calculate mean and variance for each class
+```{r}
+wine_df_mean <- tapply(wine_df$Ash,wine_df$class,mean)
+wine_df_var <- tapply(wine_df$Ash,wine_df$class,var)
+```
+
+Next,calculate t-stats, degree of freedom and p-value for class 1 and class 2
+```{r}
+ts_12<-abs((wine_df_mean[1]-wine_df_mean[2])/sqrt(wine_df_var[1]/num_class[1]+wine_df_var[2]/num_class[2]))
+df_12<-(wine_df_var[1]/num_class[1]+wine_df_var[2]/num_class[2])^2/((wine_df_var[1]/num_class[1])^2/(num_class[1]-1)+(wine_df_var[2]/num_class[2])^2/(num_class[2]-1))
+pt_12<-2*pt(ts_12, df_12,lower.tail=FALSE)
+```
+p-value equals `r pt_12`,the level of Ash differs across the class 1 and class 2 at the 95% confidence level.
+
+Finally, use built-in t-test method to verify the result:
+```{r}
+#| echo: false
+t.test(wine_df[which(wine_df$class==1),"Ash"],wine_df[which(wine_df$class==2),"Ash"])
+```
+
+
+Repeat the steps for class 1 and class 3
+```{r}
+ts_13<-abs((wine_df_mean[1]-wine_df_mean[3])/sqrt(wine_df_var[1]/num_class[1]+wine_df_var[3]/num_class[3]))
+df_13<-(wine_df_var[1]/num_class[1]+wine_df_var[3]/num_class[3])^2/((wine_df_var[1]/num_class[1])^2/(num_class[1]-1)+(wine_df_var[3]/num_class[3])^2/(num_class[3]-1))
+pt_13<-2*pt(ts_13, df_13,lower.tail=FALSE)
+```
+p-value equals `r pt_13`,we cannot say that the level of Ash differs across the class 1 and class 3 at the 95% confidence level.
+```{r}
+#| echo: false
+t.test(wine_df[which(wine_df$class==1),"Ash"],wine_df[which(wine_df$class==3),"Ash"],alternative = "two.sided")
+```
+
+Repeat the steps for class 2 and class 3
+```{r}
+ts_23<-abs((wine_df_mean[2]-wine_df_mean[3])/sqrt(wine_df_var[2]/num_class[2]+wine_df_var[3]/num_class[3]))
+df_23<-(wine_df_var[2]/num_class[2]+wine_df_var[3]/num_class[3])^2/((wine_df_var[2]/num_class[2])^2/(num_class[2]-1)+(wine_df_var[3]/num_class[3])^2/(num_class[3]-1))
+pt_23<-2*pt(ts_23, df_23,lower.tail=FALSE)
+```
+p-value equals `r pt_13`,the level of Ash differs across the class 1 and class 3 at the 95% confidence level.
+```{r}
+#| echo: false
+t.test(wine_df[which(wine_df$class==2),"Ash"],wine_df[which(wine_df$class==3),"Ash"])
 ```
