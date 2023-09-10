@@ -24,7 +24,7 @@ findRootPower <- function(num){
       return (sprintf("%.0f = %.0f ^ %.0f", num, isPerfectPower(num, power)$root, power))
     }
   }
-  # If under power 100, there is still no root, return not a perfect power
+  # If until power of 100, there is still no root, return not a perfect power
   return (sprintf("%.0f is not a perfect power", num))
 }
 

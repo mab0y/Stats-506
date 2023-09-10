@@ -1,7 +1,7 @@
 # Import wine.data to date.frame
 wine_df <- read.csv("~/桌面/Stats-506/PS-01/wine.data",header=FALSE)
 
-# Set column name to wind_df
+# Set column name to wine_df
 colnames(wine_df) <- c('class', 'Alcohol', 'Malic acid', 'Ash', 
                        'Alcalinity of ash', 'Magnesium', 'Total phenols', 
                        'Flavanoids', 'Nonflavanoid phenols', 'Proanthocyanins', 
@@ -20,13 +20,12 @@ wine_df[which.min(wine_df$Alcohol),"class"]
 # Count the number of wines have higher levels of magnesium than 114 mg/l
 sum(wine_df$Magnesium > 114)
 
-
 # Count Within each class the number of wines have 
 # higher levels of magnesium than average German beer
 table(wine_df[which(wine_df$Magnesium > 114), "class"])
 
 # Examine the level of Ash difference across three classes
-#Calculate sample mean and variance
+# Calculate sample mean and variance
 wine_df_mean <- tapply(wine_df$Ash, wine_df$class, mean)
 wine_df_var <- tapply(wine_df$Ash,wine_df$class, var)
 
