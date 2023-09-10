@@ -1,28 +1,31 @@
 ---
 title: "PS #01"
+author: Boyuan Ma
+github: https://github.com/mab0y/Stats-506/tree/main/PS-01
 format: html
 toc: true
 ---
+[Link to GitHub](https://github.com/mab0y/Stats-506/tree/main/PS-01) 
 
 
 ## Problem 1 - Wine data
 
 ### a.
 
-First, import the data from `wine.data` to the `wine_df`
+>Import the data from `wine.data` to the `wine_df`:
 
 ```{r}
 wine_df <- read.csv("~/桌面/Stats-506/PS-01/wine.data",header=FALSE)
 ```
 
-Then, give appropriate column names to the `wine_df`
+>Give appropriate column names to the `wine_df`:
 
 ```{r}
 colnames(wine_df) <- c('class','Alcohol','Malic acid','Ash','Alcalinity of ash','Magnesium','Total phenols','Flavanoids','Nonflavanoid phenols',
 'Proanthocyanins','Color intensity','Hue','OD280/OD315 of diluted wines','Proline')
 ```
 
-This shows the first 10 rows of the `wine_df`:
+>This shows the first 10 rows of the `wine_df`:
 
 ```{r}
 #| echo: false
@@ -31,46 +34,48 @@ wine_df[1:10,]
 
 ### b.
 
-Next, check the number of wines within each class:
+>Check the number of wines within each class:
 
 ```{r}
 table(wine_df$class)
 ```
 
-This is exactly the same as in `wine.names`
+>This is exactly the same as in `wine.names`.
 
 ### c.
-The wine with the highest alcohol content belongs to class 1:
+>The wine with the highest alcohol content belongs to class 1:
 
 ```{r}
 wine_df[which.max(wine_df$Alcohol),"class"]
 ```
-The wine with the highest alcohol content belongs to class 2:
+>The wine with the highest alcohol content belongs to class 2:
 
 ```{r}
 wine_df[which.min(wine_df$Alcohol),"class"]
 ```
-  26 wines have higher levels of magnesium than 114 mg/l of magnesium:
+>26 wines have higher levels of magnesium than 114 mg/l of magnesium:
 
 ```{r}
 sum(wine_df$Magnesium>114)
 ```
-15 class one, 6 class two and 5 class three have higher levels of magnesium than average German beer:
+>15 class one, 6 class two and 5 class three have higher levels of magnesium than average German beer:
 
 ```{r}
 table(wine_df[which(wine_df$Magnesium>114),"class"])
 ```
 
 ### d.
-First, calculate mean of overall dataframe and of each class:
+>Calculate mean of overall dataframe and of each class:
+
 ```{r}
 avg_overall<-lapply(wine_df,mean)
 avg_1<-lapply(wine_df[which(wine_df$class==1),],mean)
 avg_2<-lapply(wine_df[which(wine_df$class==2),],mean)
 avg_3<-lapply(wine_df[which(wine_df$class==3),],mean)
 ```
-Then use map to combine the lists, change it to data.frame object and change the name of rows
-`https://stackoverflow.com/questions/60605598/r-combine-two-lists-with-same-column-names`: helped me figure out to use Map to combine the lists
+>Use `Map()` to combine the lists, change it to `data.frame` object and change the name of rows:
+`https://stackoverflow.com/questions/60605598/r-combine-two-lists-with-same-column-names`: helped me figure out to use `Map()` to combine the lists
+
 ```{r}
 avg_combine<-Map(c,avg_overall,avg_1,avg_2,avg_3)
 avg_combine<-data.frame(avg_combine)
@@ -81,50 +86,58 @@ rownames(avg_combine)<-c("Overall","Class 1","Class 2","Class 3")
 avg_combine
 ```
 ### e.
-First, calculate number of sample from each class
+>Calculate number of sample of each class:
+
 ```{r}
 num_class <- table(wine_df$class)
 ```
-Then, calculate mean and variance for each class
+>Calculate mean and variance of each class:
+
 ```{r}
 wine_df_mean <- tapply(wine_df$Ash,wine_df$class,mean)
 wine_df_var <- tapply(wine_df$Ash,wine_df$class,var)
 ```
 
-Next,calculate t-stats, degree of freedom and p-value for class 1 and class 2
+>Calculate t-stats, degree of freedom and p-value for class 1 and class 2:
+
 ```{r}
 ts_12<-abs((wine_df_mean[1]-wine_df_mean[2])/sqrt(wine_df_var[1]/num_class[1]+wine_df_var[2]/num_class[2]))
 df_12<-(wine_df_var[1]/num_class[1]+wine_df_var[2]/num_class[2])^2/((wine_df_var[1]/num_class[1])^2/(num_class[1]-1)+(wine_df_var[2]/num_class[2])^2/(num_class[2]-1))
 pt_12<-2*pt(ts_12, df_12,lower.tail=FALSE)
 ```
-p-value equals `r pt_12`,the level of Ash differs across the class 1 and class 2 at the 95% confidence level.
+>p-value equals `r pt_12`,the level of Ash differs across the class 1 and class 2 at the 95% confidence level.
 
-Finally, use built-in t-test method to verify the result:
+>Use built-in t-test method to verify the result:
+
 ```{r}
 #| echo: false
 t.test(wine_df[which(wine_df$class==1),"Ash"],wine_df[which(wine_df$class==2),"Ash"])
 ```
 
 
-Repeat the steps for class 1 and class 3:
+>Repeat the steps for class 1 and class 3:
+
 ```{r}
 ts_13<-abs((wine_df_mean[1]-wine_df_mean[3])/sqrt(wine_df_var[1]/num_class[1]+wine_df_var[3]/num_class[3]))
 df_13<-(wine_df_var[1]/num_class[1]+wine_df_var[3]/num_class[3])^2/((wine_df_var[1]/num_class[1])^2/(num_class[1]-1)+(wine_df_var[3]/num_class[3])^2/(num_class[3]-1))
 pt_13<-2*pt(ts_13, df_13,lower.tail=FALSE)
 ```
-p-value equals `r pt_13`,we cannot say that the level of Ash differs across the class 1 and class 3 at the 95% confidence level.
+>p-value equals `r pt_13`, we cannot say that the level of Ash differs across the class 1 and class 3 at the 95% confidence level.
+
 ```{r}
 #| echo: false
 t.test(wine_df[which(wine_df$class==1),"Ash"],wine_df[which(wine_df$class==3),"Ash"],alternative = "two.sided")
 ```
 
-Repeat the steps for class 2 and class 3:
+>Repeat the steps for class 2 and class 3:
+
 ```{r}
 ts_23<-abs((wine_df_mean[2]-wine_df_mean[3])/sqrt(wine_df_var[2]/num_class[2]+wine_df_var[3]/num_class[3]))
 df_23<-(wine_df_var[2]/num_class[2]+wine_df_var[3]/num_class[3])^2/((wine_df_var[2]/num_class[2])^2/(num_class[2]-1)+(wine_df_var[3]/num_class[3])^2/(num_class[3]-1))
 pt_23<-2*pt(ts_23, df_23,lower.tail=FALSE)
 ```
-p-value equals `r pt_13`,the level of Ash differs across the class 1 and class 3 at the 95% confidence level.
+>p-value equals `r pt_13`,the level of Ash differs across the class 1 and class 3 at the 95% confidence level.
+
 ```{r}
 #| echo: false
 t.test(wine_df[which(wine_df$class==2),"Ash"],wine_df[which(wine_df$class==3),"Ash"])
@@ -164,12 +177,12 @@ findRootPower <- function(num){
       return (sprintf("%.0f = %.0f ^ %.0f", num, isPerfectPower(num, power)$root, power))
     }
   }
-  # If under power 100, there is still no root, return not a perfect power
+  # If until power of 100, there is still no root, return not a perfect power
   return (sprintf("%.0f is not a perfect power", num))
 }
 ```
 
-Next, take in some numbers to test the function:
+>Take in some numbers to test the function:
 ```{r}
 #| echo: false
 test_num <- c(27, 13060694016, 7776, 170859375, 58247422, 94143178827)
@@ -274,12 +287,12 @@ paste(unique(nrows), collapse = ", ")), domain = NA)
 2.data.frame(Suit = suits, Rank = ranks)
 1.deal_poker_round(4)
 ```
-This ocuurs beacause ChatGPT forgot to count four times ,and we also need to change it to numeric to do the max(min) operator:
+This occurs because ChatGPT count "Jack", "Queen", "King", "Ace" only once and generated only 40 cards. We also need to change "Jack", "Queen", "King", "Ace" to numeric numbers to do the max(min) and comparison operator:
 ```{r}
 ranks <- rep(2:10, times = 4)
   ranks <- c(ranks, "Jack", "Queen", "King", "Ace")
 ```
-So change these two lines into(11,12,13,1=="Jack", "Queen", "King", "Ace"), now it works:
+Change these two lines into(11,12,13,1=="Jack", "Queen", "King", "Ace"), now it works:
 ```{r}
 ranks <- rep(c(1:13), times = 4)
 ```
@@ -469,6 +482,7 @@ deal_poker_round <- function(num_players) {
 ### d.
 > Are the inputs and outputs as described above?
 
+> Inputs and outputs are as described above:
 ```{r}
 suits <- c("Hearts", "Diamonds", "Clubs", "Spades", "Spades") #a vector of suits
 ranks <- c(1,2,3,4,5) #a vector of ranks
@@ -476,9 +490,10 @@ determine_poker_hand(suits,ranks)
 deal_poker_round(5)
 ```
 
-> Inputs and outputs are as described above.
 
 > Are the hands valid (e.g. real cards, no duplicates, right number)?
+
+> Hands are valid and set up as below. They are not duplicates because they are generated one by one and cards are taken from rows of data.frame each of 5 rows in order which are non-repeating.
 
 ```{r}
   suits <- rep(c("Hearts", "Diamonds", "Clubs", "Spades"), each = 13)
@@ -487,11 +502,11 @@ deal_poker_round(5)
   print(deck)
 ```
 
-> Also, hands are not duplicates because they are generated one by one and cards are taken from rows of data.frame in order which are non-repeat.
+
 
 > Are the names of the hands correct? (See here if you’re not familiar with poker hands.)
 
-> No, Royal flush is forgotten within `determine_poker_hand`. It is of A, K, Q, J, 10 and all the same suit, need to add it to the top of if statement and change other statements to elif.
+> No, Royal flush is not included within `determine_poker_hand`. It is the highest poker hand of A, K, Q, J, 10 and all the same suit. This case is added to the top of if statement and change other statements to elif.
 
 ```{r}
 #| eval: false
@@ -502,7 +517,7 @@ if (flush && straight && max(ranks) == 13) {
 
 > Does it ensure no duplicates in cards across hands? What happens if you ask for more than 10 hands to be dealt (as there are only 52 cards in a standard deck)?
 
-> Yes, cards are taken from rows of data.frame in order which are non-repeat. If more than 10 hands are asked to be dealta, the program will crash, so an error message is needed and the function will stop.
+> Yes, cards are taken from rows of data.frame each of 5 rows in order which are non-repeating. If more than 10 hands are asked to be dealt, the program will crash. To solve this problem an error message is added and the function will stop if more than 10 hands are asked.
 
 ```{r}
 #| eval: false
@@ -636,7 +651,8 @@ determine_poker_hand <- function(suits, ranks) {
   
   # Function to check for a flush
   is_flush <- function(suits) {
-    # The unique() function will give non-repeat elements and if length of unique suits equals 1, five cards are of the same suit as a     flush. Eg: "Hearts"，"Hearts"，"Hearts"，"Hearts"，"Hearts"
+    # The unique() function will give non-repeat elements and if length of unique suits equals 1, 
+    # five cards are of the same suit as a  flush. Eg: "Hearts"，"Hearts"，"Hearts"，"Hearts"，"Hearts"
     return(length(unique(suits)) == 1)
   }
   
@@ -644,7 +660,8 @@ determine_poker_hand <- function(suits, ranks) {
   is_straight <- function(ranks) {
     # sort() function gives out a vector in ascending order, here we unique() the vector first
     sorted_ranks <- sort(unique(ranks))
-    # if the length of sorted_ranks equals 5, it means all the five cards are unique. Then we calculate the max&min difference, if it is 4, then     it's a straight as five cards in a sequence. Eg: 3,4,5,6,7
+    # if the length of sorted_ranks equals 5, it means all the five cards are unique.
+    # Then we calculate the max&min difference, if it is 4, then it's a straight as five cards in a sequence. Eg: 3,4,5,6,7
     return(length(sorted_ranks) == 5 && max(sorted_ranks) - min(sorted_ranks) == 4)
   }
   # For each player's hand, count the number of rank, and then check if it is a flush or straight or both

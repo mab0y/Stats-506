@@ -9,7 +9,8 @@ determine_poker_hand <- function(suits, ranks) {
   
   # Function to check for a flush
   is_flush <- function(suits) {
-    # The unique() function will give non-repeat elements and if length of unique suits equals 1, five cards are of the same suit as a     flush. Eg: "Hearts"，"Hearts"，"Hearts"，"Hearts"，"Hearts"
+    # The unique() function will give non-repeat elements and if length of unique suits equals 1, 
+    # five cards are of the same suit as a  flush. Eg: "Hearts"，"Hearts"，"Hearts"，"Hearts"，"Hearts"
     return(length(unique(suits)) == 1)
   }
   
@@ -17,7 +18,8 @@ determine_poker_hand <- function(suits, ranks) {
   is_straight <- function(ranks) {
     # sort() function gives out a vector in ascending order, here we unique() the vector first
     sorted_ranks <- sort(unique(ranks))
-    # if the length of sorted_ranks equals 5, it means all the five cards are unique. Then we calculate the max&min difference, if it is 4, then     it's a straight as five cards in a sequence. Eg: 3,4,5,6,7
+    # if the length of sorted_ranks equals 5, it means all the five cards are unique.
+    # Then we calculate the max&min difference, if it is 4, then it's a straight as five cards in a sequence. Eg: 3,4,5,6,7
     return(length(sorted_ranks) == 5 && max(sorted_ranks) - min(sorted_ranks) == 4)
   }
   # For each player's hand, count the number of rank, and then check if it is a flush or straight or both
