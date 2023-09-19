@@ -2,7 +2,9 @@
 title: "PS #01"
 author: Boyuan Ma
 github: https://github.com/mab0y/Stats-506/tree/main/PS-01
-format: html
+format: 
+  html:
+    embed-resources: true
 toc: true
 ---
 [Link to GitHub](https://github.com/mab0y/Stats-506/tree/main/PS-01) 
