@@ -1,0 +1,201 @@
+---
+title: "PS #02"
+author: Boyuan Ma
+github: https://github.com/mab0y/Stats-506/tree/main/PS-02
+format: 
+  html:
+    embed-resources: true
+toc: true
+---
+[Link to GitHub](https://github.com/mab0y/Stats-506/tree/main/PS-02) 
+
+## Problem 1 - Dice Game
+
+### a.
+Version 1:
+```{r}
+  #' Function to calculate total winnings with a loop
+  #'
+  #' @param times a numeric scalar
+  #' @return the total winnings after times of rolls
+  play_dice1 <- function(times){
+    total_winnings <- 0
+    for (i in 1:times){
+      dice <- sample(1:6, 1, replace = TRUE)
+      if (dice %in% c(2, 4, 6)){
+        total_winnings <- total_winnings + dice - 2
+      }
+      else{
+        total_winnings <- total_winnings - 2
+      }
+    }
+    return(total_winnings)
+  }
+```
+
+Version 2:
+```{r}
+  #' Function to calculate total winnings with vectorized functions
+  #'
+  #' @param times a numeric scalar
+  #' @return the total winnings after times of rolls
+  play_dice2 <- function(times){
+    dices <- sample(1:6, times, replace = TRUE)
+    total_winnings <- sum(ifelse(dices %in% c(2,4,6), dices -2, -2))
+    return(total_winnings)
+  }
+```
+
+Version 3:
+```{r}
+  # Here I refer to https://stackoverflow.com/questions/39176032/extracting-elements-from-a-table-in-r.
+  # I found that table names are str. I can turn them to integer to test the divisiblity or use them directly to index the value
+  
+  #' Function to calculate total winnings with table of die rolls
+  #'
+  #' @param times a numeric scalar
+  #' @return the total winnings after times of rolls
+  play_dice3 <- function(times){
+    total_winnings <- 0
+    dices_table <- table(sample(1:6, times, replace = TRUE))
+    for (i in names(dices_table)){
+      name_integer = as.integer(i)
+      if (name_integer %% 2 == 0){
+        total_winnings <- total_winnings + dices_table[[i]] * (name_integer -2)
+      }
+      else{
+        total_winnings <- total_winnings - dices_table[[i]] * 2
+      }
+    }
+    return(total_winnings)
+  }
+```
+
+Version 4:
+```{r}
+  #' Function to calculate total winnings with lapply function
+  #'
+  #' @param times a numeric scalar
+  #' @return the total winnings after times of rolls
+  play_dice4 <- function(times){
+    dices <- sample(1:6, times, replace = TRUE)
+    winnings <- sapply(dices, function(dice){
+      if (dice %in% c(2,4,6)){
+        return(dice-2)
+      }
+      else{
+        return(-2)
+      }
+    })
+    return(sum(winnings))
+  }
+```
+
+### b.
+Version 1:
+```{r}
+  play_dice1(3)
+  play_dice1(3000)
+```
+
+Version 2:
+```{r}
+  play_dice1(3)
+  play_dice1(3000)
+```
+
+Version 3:
+```{r}
+  play_dice2(3)
+  play_dice2(3000)
+```
+
+Version 4:
+```{r}
+  play_dice2(3)
+  play_dice2(3000)
+```
+
+### c.
+Version 1:
+```{r}
+  set.seed(42)
+  play_dice1(3)
+  play_dice1(3000)
+```
+
+```{r}
+  set.seed(42)
+  play_dice2(3)
+  play_dice2(3000)
+```
+
+```{r}
+  set.seed(42)
+  play_dice3(3)
+  play_dice3(3000)
+```
+
+```{r}
+  set.seed(42)
+  play_dice4(3)
+  play_dice4(3000)
+```
+
+### d.
+```{r}
+#| echo: false
+library(microbenchmark)
+```
+low input (100):
+```{r}
+  mb1<-microbenchmark(play_dice1(100))
+  mb2<-microbenchmark(play_dice2(100))
+  mb3<-microbenchmark(play_dice3(100))
+  mb4<-microbenchmark(play_dice4(100))
+  rbind(mb1,mb2,mb3,mb4)
+```
+large input (10000):
+```{r}
+  mb1<-microbenchmark(play_dice1(10000))
+  mb2<-microbenchmark(play_dice2(10000))
+  mb3<-microbenchmark(play_dice3(10000))
+  mb4<-microbenchmark(play_dice4(10000))
+  rbind(mb1,mb2,mb3,mb4)
+```
+For low input, vectorized function executes apparently faster than other function, and collapsing into table also works well. Looping is the slowest function.
+
+For large input, vectorized function and collapsing into table work nearly at the same speed. Here table function provide a shortcut to count the number of each dices and vectorized function still need to go over all the dices. Also, apply function and looping are even more slower.
+
+### e.
+It's a fair game, the expected winning of each dice is 0 thus the total winnings is 0 regardless of how many dice the gamer chooses. Here simulate the game playing 100000 times with number of dice from 1 to 20, and check the average winnings:
+I:
+```{r}
+for (i in 1:20){
+  cat("Number of dice to roll is:", i, "The average total winning is:", mean(replicate(100000,play_dice1(i))), "\n")
+}
+```
+
+## Problem 2 - Linear Regression
+### a.
+```{r}
+cars <- read.csv("~/cars.csv",header=TRUE)
+colnames(cars) <- c("height", "length", "width", "driveline", "engine_type", "hybrid", "forward_gears", "transmission", "city_mpg","fuel_type", "highway_mpg", "classification", "id", "make", "model_year", "year", "horsepower", "torque")
+```
+
+### b.
+```{r}
+cars <- cars[which(cars$fuel_type == "Gasoline"),]
+```
+
+### c.
+```{r}
+cars$year <- as.factor(cars$year)
+cars_lm <- lm(highway_mpg ~ horsepower + torque + height + length + width + year, cars)
+```
+
+```{r}
+#| echo: false
+cars_lm
+```
+Controlling all three dimensions of the car and the year chosen the same, 1 increase in horsepower will increase highway MPG by 0.0163556, on average.
