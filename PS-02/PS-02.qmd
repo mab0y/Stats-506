@@ -124,18 +124,21 @@ Version 1:
   play_dice1(3000)
 ```
 
+Version 2:
 ```{r}
   set.seed(42)
   play_dice2(3)
   play_dice2(3000)
 ```
 
+Version 3:
 ```{r}
   set.seed(42)
   play_dice3(3)
   play_dice3(3000)
 ```
 
+Version 4:
 ```{r}
   set.seed(42)
   play_dice4(3)
@@ -163,12 +166,12 @@ large input (10000):
   mb4<-microbenchmark(play_dice4(10000))
   rbind(mb1,mb2,mb3,mb4)
 ```
-For low input, vectorized function executes apparently faster than other function, and collapsing into table also works well. Looping is the slowest function.
+For low input, vectorized function executes apparently faster than other function. Collapsing into table also works well. Apply function is a little slower than vectorized function and collapsing into table. Looping is the slowest function.
 
-For large input, vectorized function and collapsing into table work nearly at the same speed. Here table function provide a shortcut to count the number of each dices and vectorized function still need to go over all the dices. Also, apply function and looping are even more slower.
+For large input, vectorized function and collapsing into table work at nearly the same speed. Table function may provide a shortcut to count the number of each dices while vectorized function still need to go over all the dices. Also, apply function and looping are even more slower.
 
 ### e.
-It's a fair game, the expected winning of each dice is 0 thus the total winnings is 0 regardless of how many dice the gamer chooses. Here simulate the game playing 100000 times with number of dice from 1 to 20, and check the average winnings:
+It's a fair game, the expected winning of each dice is 0 thus the total winnings is 0 regardless of how many dice the gamer chooses. Here I simulate the game playing the game 100000 times with number of dice from 1 to 20, and check the average winnings:
 I:
 ```{r}
 for (i in 1:20){
@@ -199,3 +202,36 @@ cars_lm <- lm(highway_mpg ~ horsepower + torque + height + length + width + year
 cars_lm
 ```
 Controlling all three dimensions of the car and the year chosen the same, 1 increase in horsepower will increase highway MPG by 0.0163556, on average.
+
+### d.
+```{r}
+#| echo: false
+library(interactions)
+```
+
+```{r}
+cars_lm_inter <- lm(highway_mpg ~ horsepower * torque +  year, cars)
+interact_plot(cars_lm_inter, pred = horsepower, modx = torque, at = list("year"=factor(2011)))
+```
+
+### e.
+Add the constant 1 , interaction term and dummy variable of year, combine time together to the design matrix:
+```{r}
+horsepower_torque<-cars$horsepower*cars$torque
+year2010 <- as.numeric(cars$year == 2010)
+year2011 <- as.numeric(cars$year == 2011)              
+year2012 <- as.numeric(cars$year == 2012)
+
+design_matrix <- cbind(rep(1,nrow(cars)),cars[,c("horsepower","torque")],year2010,year2011,year2012,horsepower_torque)
+design_matrix <- as.matrix(design_matrix)
+```
+Solve beta_hat:
+```{r}
+beta_hat <- solve(t(design_matrix) %*% design_matrix) %*% t(design_matrix) %*% cars$highway_mpg
+```
+
+```{r}
+#| echo: false
+beta_hat
+cars_lm_inter
+```
