@@ -9,7 +9,8 @@ cars <- cars[which(cars$fuel_type == "Gasoline"),]
 cars$year <- as.factor(cars$year)
 cars_lm <- lm(highway_mpg ~ horsepower + torque + height + length + width + year, cars)
 
-cars_lm_inter <- lm(highway_mpg ~ horsepower * torque +  year, cars)
+cars_lm_inter <- lm(highway_mpg ~ horsepower * torque + height + length + width + year, cars)
+library(interactions)
 interact_plot(cars_lm_inter, pred = horsepower, modx = torque, at = list("year"=factor(2011)))
 
 horsepower_torque<-cars$horsepower*cars$torque
