@@ -10,8 +10,16 @@ cars$year <- as.factor(cars$year)
 cars_lm <- lm(highway_mpg ~ horsepower + torque + height + length + width + year, cars)
 
 cars_lm_inter <- lm(highway_mpg ~ horsepower * torque + height + length + width + year, cars)
+
+table(cars$year)
+
+
 library(interactions)
 interact_plot(cars_lm_inter, pred = horsepower, modx = torque, at = list("year"=factor(2011)))
+
+hist(cars$torque)
+quantile(cars$torque)
+interact_plot(cars_lm_inter, pred = horsepower, modx = torque, modx.values = c(150,250,350), at = list("year"=factor(2011)))
 
 horsepower_torque<-cars$horsepower*cars$torque
 year2010 <- as.numeric(cars$year == 2010)

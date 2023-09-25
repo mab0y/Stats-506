@@ -166,7 +166,7 @@ large input (10000):
   mb4<-microbenchmark(play_dice4(10000))
   rbind(mb1,mb2,mb3,mb4)
 ```
-For low input, vectorized functions appear to execute faster compared to other methods. Collapsing the data into table also yields efficient results. The `apply` function exhibits slightly slower performance compared to vectorized functions and data table transformations, while using loops is the slowest approach.
+For low input, vectorized function appears to execute faster compared to other methods. Collapsing the data into table also yields efficient results. The `apply` function exhibits slightly slower performance compared to vectorized functions and table transformations, while using loops is the slowest approach.
 
 For large input, both vectorized functions and data table transformations perform at similar speeds. The `table` function may provide a shortcut for counting the occurrences of each dice outcome, as it avoids the need to iterate over all the dice rolls. `apply` functions and looping  still exhibit slower execution times.
 
@@ -208,10 +208,20 @@ Controlling all three dimensions of the car and the year chosen the same, 1 incr
 #| echo: false
 library(interactions)
 ```
-
+Choose year 2011 as input:
+```{r}
+table(cars$year)
+```
+Draw lines from default +/- 1 standard deviation of torque:
 ```{r}
 cars_lm_inter <- lm(highway_mpg ~ horsepower * torque +  year, cars)
 interact_plot(cars_lm_inter, pred = horsepower, modx = torque, at = list("year"=factor(2011)))
+```
+Or we can choose more reasonable values for torque:
+```{r}
+hist(cars$torque)
+quantile(cars$torque)
+interact_plot(cars_lm_inter, pred = horsepower, modx = torque, modx.values = c(150,250,350), at = list("year"=factor(2011)))
 ```
 
 ### e.
@@ -385,4 +395,64 @@ Expression: Linear prediction, predict()
 Variables that uniquely identify margins: horsepower torque
 ```
 
-![Regression output](C:/Users/mab0y/OneDrive/文档/Stats-506/PS-02/regression.jpg)
+![Regression Output 1](C:/Users/mab0y/OneDrive/文档/Stats-506/PS-02/regression1.jpg)
+
+Or we can choose more reasonable values for torque:
+```stata
+. margins,  at(horsepower=(200(200)600) torque=(150 250 350) year=2011)
+
+Predictive margins                                       Number of obs = 4,591
+Model VCE: OLS
+
+Expression: Linear prediction, predict()
+1._at: horsepower =  200
+       torque     =  150
+       year       = 2011
+2._at: horsepower =  200
+       torque     =  250
+       year       = 2011
+3._at: horsepower =  200
+       torque     =  350
+       year       = 2011
+4._at: horsepower =  400
+       torque     =  150
+       year       = 2011
+5._at: horsepower =  400
+       torque     =  250
+       year       = 2011
+6._at: horsepower =  400
+       torque     =  350
+       year       = 2011
+7._at: horsepower =  600
+       torque     =  150
+       year       = 2011
+8._at: horsepower =  600
+       torque     =  250
+       year       = 2011
+9._at: horsepower =  600
+       torque     =  350
+       year       = 2011
+
+------------------------------------------------------------------------------
+             |            Delta-method
+             |     Margin   std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+         _at |
+          1  |   30.42189   .1583814   192.08   0.000     30.11138    30.73239
+          2  |   24.06309   .1533936   156.87   0.000     23.76237    24.36382
+          3  |    17.7043   .3370353    52.53   0.000     17.04355    18.36505
+          4  |   30.45992   .5421826    56.18   0.000     29.39698    31.52286
+          5  |   26.34826   .3414242    77.17   0.000     25.67891    27.01762
+          6  |    22.2366   .1683503   132.09   0.000     21.90656    22.56665
+          7  |   30.49796   .9828305    31.03   0.000     28.57114    32.42478
+          8  |   28.63343   .7619393    37.58   0.000     27.13966     30.1272
+          9  |   26.76891   .5622544    47.61   0.000     25.66662     27.8712
+------------------------------------------------------------------------------
+
+. marginsplot, xtitle(horsepower) ytitle(highway_mpg)
+
+Variables that uniquely identify margins: horsepower torque
+
+```
+![Regression Output 2](C:/Users/mab0y/OneDrive/文档/Stats-506/PS-02/regression2.jpg)
+

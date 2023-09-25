@@ -19,7 +19,10 @@ local mean_minus_sd = `mean_value' - `sd_value'
 
 
 margins,  at(horsepower=(200(200)600) torque=(`mean_minus_sd' `mean_value' `mean_plus_sd') year=2011)
-marginsplot, xlabel(horsepower) ylabel(highway_mpg)
+marginsplot, xtitle(horsepower) ytitle(highway_mpg)
+
+margins,  at(horsepower=(200(200)600) torque=(150 250 350) year=2011)
+marginsplot, xtitle(horsepower) ytitle(highway_mpg)
 
 
 
