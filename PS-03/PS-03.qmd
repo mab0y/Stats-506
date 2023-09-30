@@ -1,0 +1,458 @@
+---
+title: "PS #02"
+author: Boyuan Ma
+github: https://github.com/mab0y/Stats-506/tree/main/PS-02
+format: 
+  html:
+    embed-resources: true
+toc: true
+---
+[Link to GitHub](https://github.com/mab0y/Stats-506/tree/main/PS-02) 
+
+## Problem 1 - Dice Game
+
+### a.
+Version 1:
+```{r}
+  #' Function to calculate total winnings with a loop
+  #'
+  #' @param times a numeric scalar
+  #' @return the total winnings after times of rolls
+  play_dice1 <- function(times){
+    total_winnings <- 0
+    for (i in 1:times){
+      dice <- sample(1:6, 1, replace = TRUE)
+      if (dice %in% c(2, 4, 6)){
+        total_winnings <- total_winnings + dice - 2
+      }
+      else{
+        total_winnings <- total_winnings - 2
+      }
+    }
+    return(total_winnings)
+  }
+```
+
+Version 2:
+```{r}
+  #' Function to calculate total winnings with vectorized functions
+  #'
+  #' @param times a numeric scalar
+  #' @return the total winnings after times of rolls
+  play_dice2 <- function(times){
+    dices <- sample(1:6, times, replace = TRUE)
+    total_winnings <- sum(ifelse(dices %in% c(2,4,6), dices -2, -2))
+    return(total_winnings)
+  }
+```
+
+Version 3:
+```{r}
+  # Here I refer to https://stackoverflow.com/questions/39176032/extracting-elements-from-a-table-in-r.
+  # I found that table names are str. I can turn them to integer to test the divisiblity or use them directly to index the value
+  
+  #' Function to calculate total winnings with table of die rolls
+  #'
+  #' @param times a numeric scalar
+  #' @return the total winnings after times of rolls
+  play_dice3 <- function(times){
+    total_winnings <- 0
+    dices_table <- table(sample(1:6, times, replace = TRUE))
+    for (i in names(dices_table)){
+      name_integer = as.integer(i)
+      if (name_integer %% 2 == 0){
+        total_winnings <- total_winnings + dices_table[[i]] * (name_integer -2)
+      }
+      else{
+        total_winnings <- total_winnings - dices_table[[i]] * 2
+      }
+    }
+    return(total_winnings)
+  }
+```
+
+Version 4:
+```{r}
+  #' Function to calculate total winnings with lapply function
+  #'
+  #' @param times a numeric scalar
+  #' @return the total winnings after times of rolls
+  play_dice4 <- function(times){
+    dices <- sample(1:6, times, replace = TRUE)
+    winnings <- sapply(dices, function(dice){
+      if (dice %in% c(2,4,6)){
+        return(dice-2)
+      }
+      else{
+        return(-2)
+      }
+    })
+    return(sum(winnings))
+  }
+```
+
+### b.
+Version 1:
+```{r}
+  play_dice1(3)
+  play_dice1(3000)
+```
+
+Version 2:
+```{r}
+  play_dice1(3)
+  play_dice1(3000)
+```
+
+Version 3:
+```{r}
+  play_dice2(3)
+  play_dice2(3000)
+```
+
+Version 4:
+```{r}
+  play_dice2(3)
+  play_dice2(3000)
+```
+
+### c.
+Version 1:
+```{r}
+  set.seed(42)
+  play_dice1(3)
+  play_dice1(3000)
+```
+
+Version 2:
+```{r}
+  set.seed(42)
+  play_dice2(3)
+  play_dice2(3000)
+```
+
+Version 3:
+```{r}
+  set.seed(42)
+  play_dice3(3)
+  play_dice3(3000)
+```
+
+Version 4:
+```{r}
+  set.seed(42)
+  play_dice4(3)
+  play_dice4(3000)
+```
+
+### d.
+```{r}
+#| echo: false
+library(microbenchmark)
+```
+low input (100):
+```{r}
+  mb1<-microbenchmark(play_dice1(100))
+  mb2<-microbenchmark(play_dice2(100))
+  mb3<-microbenchmark(play_dice3(100))
+  mb4<-microbenchmark(play_dice4(100))
+  rbind(mb1,mb2,mb3,mb4)
+```
+large input (10000):
+```{r}
+  mb1<-microbenchmark(play_dice1(10000))
+  mb2<-microbenchmark(play_dice2(10000))
+  mb3<-microbenchmark(play_dice3(10000))
+  mb4<-microbenchmark(play_dice4(10000))
+  rbind(mb1,mb2,mb3,mb4)
+```
+For low input, vectorized function appears to execute faster compared to other methods. Collapsing the data into table also yields efficient results. The `apply` function exhibits slightly slower performance compared to vectorized functions and table transformations, while using loops is the slowest approach.
+
+For large input, both vectorized functions and data table transformations perform at similar speeds. The `table` function may provide a shortcut for counting the occurrences of each dice outcome, as it avoids the need to iterate over all the dice rolls. `apply` functions and looping  still exhibit slower execution times.
+
+### e.
+The game is fair, with each dice having an expected winning of 0. Consequently, the total winnings remain 0, regardless of the number of dice the player selects. In this simulation, I played the game 100,000 times, varying the number of dice from 1 to 20, and calculated the average winnings for each scenario:
+I:
+```{r}
+for (i in 1:20){
+  cat("Number of dice to roll is:", i, "The average total winning is:", mean(replicate(100000,play_dice1(i))), "\n")
+}
+```
+
+## Problem 2 - Linear Regression
+### a.
+```{r}
+cars <- read.csv("~/cars.csv",header=TRUE)
+colnames(cars) <- c("height", "length", "width", "driveline", "engine_type", "hybrid", "forward_gears", "transmission", "city_mpg","fuel_type", "highway_mpg", "classification", "id", "make", "model_year", "year", "horsepower", "torque")
+```
+
+### b.
+```{r}
+cars <- cars[which(cars$fuel_type == "Gasoline"),]
+```
+
+### c.
+```{r}
+cars$year <- as.factor(cars$year)
+cars_lm <- lm(highway_mpg ~ horsepower + torque + height + length + width + year, cars)
+```
+
+```{r}
+#| echo: false
+cars_lm
+```
+Controlling all three dimensions of the car and the year chosen the same, 1 increase in horsepower will increase highway MPG by 0.0163556, on average.
+
+### d.
+```{r}
+#| echo: false
+library(interactions)
+```
+Choose year 2011 as input:
+```{r}
+table(cars$year)
+```
+Draw lines from default +/- 1 standard deviation of torque:
+```{r}
+cars_lm_inter <- lm(highway_mpg ~ horsepower * torque +  year, cars)
+interact_plot(cars_lm_inter, pred = horsepower, modx = torque, at = list("year"=factor(2011)))
+```
+Or we can choose more reasonable values for torque:
+```{r}
+hist(cars$torque)
+quantile(cars$torque)
+interact_plot(cars_lm_inter, pred = horsepower, modx = torque, modx.values = c(150,250,350), at = list("year"=factor(2011)))
+```
+
+### e.
+Add the constant column of 1, interaction term and dummy variable of year, combine them together to the design matrix:
+```{r}
+horsepower_torque<-cars$horsepower*cars$torque
+year2010 <- as.numeric(cars$year == 2010)
+year2011 <- as.numeric(cars$year == 2011)              
+year2012 <- as.numeric(cars$year == 2012)
+
+design_matrix <- cbind(rep(1,nrow(cars)),cars[,c("horsepower","torque")],year2010,year2011,year2012,horsepower_torque)
+design_matrix <- as.matrix(design_matrix)
+```
+Solve beta_hat:
+```{r}
+beta_hat <- solve(t(design_matrix) %*% design_matrix) %*% t(design_matrix) %*% cars$highway_mpg
+```
+
+```{r}
+#| echo: false
+beta_hat
+cars_lm_inter
+```
+
+## Problem 3 - Stata
+### a.
+```stata
+. import delimited cars.csv
+(encoding automatically selected: ISO-8859-1)
+(18 vars, 5,076 obs)
+
+. rename (dimensionsheight dimensionslength dimensionswidth engineinformationdri veline engineinformationenginestatistic engineinformationenginetype engineinformationhybrid engineinformationnumberofforward engineinformationtransmission fuelinformation citympg fuelinformation fueltype fuelinformationhighwaympg identificationclassification identificationid identificationmake identificationmodelyear identificationyear v18) (height length width driveline horsepower enginetype hybrid forward_gears transmission city_mpg fuel_type highway_mpg classification id make model_year year torque)
+```
+
+### b.
+```stata
+. keep if fuel_type == "Gasoline"
+(485 observations deleted)
+```
+
+### c.
+```stata
+. reg highway_mpg c.horsepower c.torque c.height c.length c.width i.year
+      Source |       SS           df       MS      Number of obs   =     4,591
+-------------+----------------------------------   F(8, 4582)      =    413.35
+       Model |  70043.6695         8  8755.45869   Prob > F        =    0.0000
+    Residual |   97055.298     4,582  21.1818634   R-squared       =    0.4192
+-------------+----------------------------------   Adj R-squared   =    0.4182
+       Total |  167098.968     4,590  36.4050038   Root MSE        =    4.6024
+
+------------------------------------------------------------------------------
+ highway_mpg | Coefficient  Std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+  horsepower |   .0163556   .0022772     7.18   0.000     .0118913      .02082
+      torque |  -.0507425    .002203   -23.03   0.000    -.0550614   -.0464236
+      height |   .0099079   .0011267     8.79   0.000      .007699    .0121168
+      length |    .001729   .0008836     1.96   0.050    -3.36e-06    .0034613
+       width |  -.0003343   .0009045    -0.37   0.712    -.0021075    .0014388
+             |
+        year |
+       2010  |  -.4539681   .6768246    -0.67   0.502     -1.78087    .8729342
+       2011  |   .1711016   .6757043     0.25   0.800    -1.153604    1.495808
+       2012  |   1.302928   .6810076     1.91   0.056    -.0321751    2.638031
+             |
+       _cons |   32.29266   .7225982    44.69   0.000     30.87602     33.7093
+------------------------------------------------------------------------------
+Controlling all three dimensions of the car and the year chosen the same, 1 increase in horsepower will increase highway MPG by 0.0163556, on average.
+
+```
+
+### d.
+Perfom the regression:
+```stata
+. reg highway_mpg c.horsepower##c.torque c.height  c.length c.width i.year
+
+     Source |       SS           df       MS      Number of obs   =     4,591
+-------------+----------------------------------   F(9, 4581)      =    480.07
+       Model |  81105.8715         9  9011.76351   Prob > F        =    0.0000
+    Residual |   85993.096     4,581  18.7716865   R-squared       =    0.4854
+-------------+----------------------------------   Adj R-squared   =    0.4844
+       Total |  167098.968     4,590  36.4050038   Root MSE        =    4.3326
+
+-------------------------------------------------------------------------------
+  highway_mpg | Coefficient  Std. err.      t    P>|t|     [95% conf. interval]
+--------------+----------------------------------------------------------------
+   horsepower |  -.0166633   .0025388    -6.56   0.000    -.0216406    -.011686
+       torque |  -.0860593   .0025333   -33.97   0.000    -.0910257   -.0810928
+              |
+ c.horsepower#|
+     c.torque |   .0001124   4.63e-06    24.28   0.000     .0001033    .0001214
+              |
+       height |   .0065604   .0010696     6.13   0.000     .0044634    .0086573
+       length |   .0017767   .0008318     2.14   0.033     .0001459    .0034075
+        width |  -.0011694   .0008521    -1.37   0.170      -.00284    .0005011
+              |
+         year |
+        2010  |  -.5627858   .6371716    -0.88   0.377    -1.811949    .6863777
+        2011  |   .0725356   .6361142     0.11   0.909    -1.174555    1.319626
+        2012  |   1.197033   .6411085     1.87   0.062    -.0598488    2.453915
+              |
+        _cons |   42.18795   .7930274    53.20   0.000     40.63323    43.74266
+-------------------------------------------------------------------------------
+
+
+```
+Calculate the mean and one standard deviation of torque to draw three lines: 
+```stata
+. local mean_value = r(mean)
+
+. local sd_value = r(sd)
+
+. local mean_plus_sd = `mean_value' + `sd_value'
+
+. local mean_minus_sd = `mean_value' - `sd_value'
+```
+
+Set year to 2011, draw the three lines with margins:
+```stata
+. margins,  at(horsepower=(200(200)600) torque=(`mean_minus_sd' `mean_value' `mean_plus_sd') year=2011)
+
+Predictive margins                                       Number of obs = 4,591
+Model VCE: OLS
+
+Expression: Linear prediction, predict()
+1._at: horsepower =      200
+       torque     = 165.8927
+       year       =     2011
+2._at: horsepower =      200
+       torque     = 267.2196
+       year       =     2011
+3._at: horsepower =      200
+       torque     = 368.5464
+       year       =     2011
+4._at: horsepower =      400
+       torque     = 165.8927
+       year       =     2011
+5._at: horsepower =      400
+       torque     = 267.2196
+       year       =     2011
+6._at: horsepower =      400
+       torque     = 368.5464
+       year       =     2011
+7._at: horsepower =      600
+       torque     = 165.8927
+       year       =     2011
+8._at: horsepower =      600
+       torque     = 267.2196
+       year       =     2011
+9._at: horsepower =      600
+       torque     = 368.5464
+       year       =     2011
+
+------------------------------------------------------------------------------
+             |            Delta-method
+             |     Margin   std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+         _at |
+          1  |    29.4113   .1368001   214.99   0.000     29.14311     29.6795
+          2  |   22.96814   .1803005   127.39   0.000     22.61466    23.32161
+          3  |   16.52497   .3746571    44.11   0.000     15.79046    17.25948
+          4  |   29.80647   .5097161    58.48   0.000     28.80718    30.80576
+          5  |   25.64025   .3082581    83.18   0.000     25.03592    26.24459
+          6  |   21.47404   .1475815   145.51   0.000     21.18471    21.76337
+          7  |   30.20163   .9468995    31.90   0.000     28.34526    32.05801
+          8  |   28.31237   .7255319    39.02   0.000     26.88998    29.73476
+          9  |   26.42311   .5295177    49.90   0.000       25.385    27.46122
+------------------------------------------------------------------------------
+
+. marginsplot
+
+Variables that uniquely identify margins: horsepower torque
+```
+
+![Regression Output 1](C:/Users/mab0y/OneDrive/文档/Stats-506/PS-02/regression1.jpg)
+
+Or we can choose more reasonable values for torque:
+```stata
+. margins,  at(horsepower=(200(200)600) torque=(150 250 350) year=2011)
+
+Predictive margins                                       Number of obs = 4,591
+Model VCE: OLS
+
+Expression: Linear prediction, predict()
+1._at: horsepower =  200
+       torque     =  150
+       year       = 2011
+2._at: horsepower =  200
+       torque     =  250
+       year       = 2011
+3._at: horsepower =  200
+       torque     =  350
+       year       = 2011
+4._at: horsepower =  400
+       torque     =  150
+       year       = 2011
+5._at: horsepower =  400
+       torque     =  250
+       year       = 2011
+6._at: horsepower =  400
+       torque     =  350
+       year       = 2011
+7._at: horsepower =  600
+       torque     =  150
+       year       = 2011
+8._at: horsepower =  600
+       torque     =  250
+       year       = 2011
+9._at: horsepower =  600
+       torque     =  350
+       year       = 2011
+
+------------------------------------------------------------------------------
+             |            Delta-method
+             |     Margin   std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+         _at |
+          1  |   30.42189   .1583814   192.08   0.000     30.11138    30.73239
+          2  |   24.06309   .1533936   156.87   0.000     23.76237    24.36382
+          3  |    17.7043   .3370353    52.53   0.000     17.04355    18.36505
+          4  |   30.45992   .5421826    56.18   0.000     29.39698    31.52286
+          5  |   26.34826   .3414242    77.17   0.000     25.67891    27.01762
+          6  |    22.2366   .1683503   132.09   0.000     21.90656    22.56665
+          7  |   30.49796   .9828305    31.03   0.000     28.57114    32.42478
+          8  |   28.63343   .7619393    37.58   0.000     27.13966     30.1272
+          9  |   26.76891   .5622544    47.61   0.000     25.66662     27.8712
+------------------------------------------------------------------------------
+
+. marginsplot, xtitle(horsepower) ytitle(highway_mpg)
+
+Variables that uniquely identify margins: horsepower torque
+
+```
+![Regression Output 2](C:/Users/mab0y/OneDrive/文档/Stats-506/PS-02/regression2.jpg)
+
