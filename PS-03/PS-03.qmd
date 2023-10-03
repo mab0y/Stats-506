@@ -326,3 +326,70 @@ Use SQL query to get the same result:
 ```{r}
 dbGetQuery(sakila, "SELECT country.country,COUNT(cust.customer_id) as number FROM customer cust JOIN address a ON cust.address_id=a.address_id JOIN city ON a.city_id=city.city_id JOIN country ON city.country_id=country.country_id GROUP BY country.country HAVING number=9")
 ```
+
+## Problem 3 - US Records
+```{r}
+#| echo: false
+us_500 <- read.csv("~/us-500.csv",header=TRUE)
+```
+
+### a.
+14% of email addresses are hosted at a domain with TLD “.net”:
+```{r}
+length(grep("\\.net$", us_500$email))/length(us_500$email)
+```
+
+### b.
+50.6% of email addresses have at least one non alphanumeric character in them:
+```{r}
+length(grep("[^a-zA-Z0-9]+[a-zA-Z0-9]*@", us_500$email))/length(us_500$email)
+```
+
+### c.
+973 is the most common area code amongst all phone numbers:
+```{r}
+area_code<-table(sapply(us_500$phone1,substr,start=1,stop=3))
+area_code_most_common<-area_code[which.max(area_code)]
+```
+```{r}
+#| echo: false
+area_code_most_common
+```
+### d.
+[Remove](https://stackoverflow.com/questions/9704213/remove-part-of-a-string) the part of the string before the apartment numbers by replacing it with an empty string:
+```{r}
+address_apt<-us_500$address[grep(".+#", us_500$address)]
+apt_num<-gsub(pattern=".+#", replacement = "", address_apt)
+hist(log(as.numeric(apt_num)))
+```
+### e.
+Take the leading digit and create a bar chart. It appears that the apartment numbers do not adhere to Benford's Law, suggesting that they may not represent real data:
+```{r}
+apt_num_leading<-as.numeric(substr(apt_num,1,1))
+barplot(table(apt_num_leading))
+```
+The probability distribution of the real data significantly diverges from Benford's law distribution:
+```{r}
+apt_num_leading_dist<-table(apt_num_leading)/length(apt_num_leading)
+benford<-log(1+1/c(1:9),base=10)
+names(benford)<-1:9
+
+cbind(apt_num_leading_dist,benford)
+```
+### f.
+Split the address string by spaces, extract the first part (which is the street number), convert it to a numeric value, and then take the modulus of it by 10 to obtain the last digit:
+```{r}
+st_split<-strsplit(us_500$address," ")
+st_num <- as.numeric(sapply(st_split, function(x) x[1]))
+st_num_last<-st_num %%10
+st_num_last<-st_num_last[st_num_last>0]
+```
+Take the last digit and create a bar chart. It appears that the apartment numbers do not adhere to Benford's Law, suggesting that they may not represent real data:
+```{r}
+barplot(table(st_num_last))
+```
+The probability distribution of the real data significantly diverges from Benford's law distribution:
+```{r}
+st_num_last_dist<-table(st_num_last)/length(st_num_last)
+cbind(st_num_last_dist,benford)
+```
