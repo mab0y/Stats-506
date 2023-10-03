@@ -3031,6 +3031,12 @@ vertical-align: -.125em;
   <li><a href="#c." id="toc-c." class="nav-link" data-scroll-target="#c.">c.</a></li>
   <li><a href="#d." id="toc-d." class="nav-link" data-scroll-target="#d.">d.</a></li>
   </ul></li>
+  <li><a href="#problem-2---sakila" id="toc-problem-2---sakila" class="nav-link" data-scroll-target="#problem-2---sakila">Problem 2 - Sakila</a>
+  <ul class="collapse">
+  <li><a href="#a.-1" id="toc-a.-1" class="nav-link" data-scroll-target="#a.-1">a.</a></li>
+  <li><a href="#b.-1" id="toc-b.-1" class="nav-link" data-scroll-target="#b.-1">b.</a></li>
+  <li><a href="#c.-1" id="toc-c.-1" class="nav-link" data-scroll-target="#c.-1">c.</a></li>
+  </ul></li>
   </ul>
 </nav>
 </div>
@@ -3060,9 +3066,9 @@ vertical-align: -.125em;
 </header>
 
 <p><a href="https://github.com/mab0y/Stats-506/tree/main/PS-03">Link to GitHub</a></p>
+<p>I have attached all relevant resources and links that helped me complete this problem in the form of hyperlinks.</p>
 <section id="problem-1---vision" class="level2">
 <h2 class="anchored" data-anchor-id="problem-1---vision">Problem 1 - Vision</h2>
-<p>I have attached all relevant resources and links that helped me complete this problem in the form of hyperlinks.</p>
 <section id="a." class="level3">
 <h3 class="anchored" data-anchor-id="a.">a.</h3>
 <p>Import <code>DEMO_D.XPT</code> and save it to <code>DEMO_D.dta</code> file:</p>
@@ -3295,6 +3301,112 @@ aic              8475.887        8287.761        7909.808
 <span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a>    Ha: <span class="fu">diff</span> &lt; 0                 Ha: <span class="fu">diff</span> != 0                 Ha: <span class="fu">diff</span> &gt; 0</span>
 <span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a> Pr(Z &lt; z) = 1.0000         Pr(|Z| &gt; |z|) = 0.0000          Pr(Z &gt; z) = 0.0000</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>The difference and standard error under null hypothesis are calculated to get Z-stat. p-value = 0.0000, we should reject the null hypothesis. The proportion of wearers of glasses/contact lenses for distance vision differs between men and women.</p>
+</section>
+</section>
+<section id="problem-2---sakila" class="level2">
+<h2 class="anchored" data-anchor-id="problem-2---sakila">Problem 2 - Sakila</h2>
+<section id="a.-1" class="level3">
+<h3 class="anchored" data-anchor-id="a.-1">a.</h3>
+<p>All films are in English:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dbGetQuery</span>(sakila,<span class="st">&quot;SELECT l.name, COUNT(f.film_id) FROM film f JOIN language l ON f.language_id = l.language_id GROUP BY l.name&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     name COUNT(f.film_id)
+1 English             1000</code></pre>
+</div>
+</div>
+</section>
+<section id="b.-1" class="level3">
+<h3 class="anchored" data-anchor-id="b.-1">b.</h3>
+<p>Extract <code>film_category</code> and <code>category</code>:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>film_category<span class="ot">&lt;-</span><span class="fu">dbGetQuery</span>(sakila,<span class="st">&quot;SELECT * FROM film_category&quot;</span>)</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>category<span class="ot">&lt;-</span><span class="fu">dbGetQuery</span>(sakila,<span class="st">&quot;SELECT * FROM category&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><code>film_id</code> and <code>category_id</code> are one to one relationship, Just need to sort the table of each <code>category_id</code> and find the corresponding <code>category_name</code> to each <code>category_id</code>.Sports is the most common in the data and 74 movies are of this genre:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>max_category_id<span class="ot">&lt;-</span><span class="fu">sort</span>(<span class="fu">table</span>(film_category<span class="sc">$</span>category_id),<span class="at">decreasing =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>max_category_name<span class="ot">&lt;-</span><span class="fu">cbind</span>(category<span class="sc">$</span>name[<span class="fu">as.numeric</span>(<span class="fu">names</span>(max_category_id))],<span class="fu">as.vector</span>(max_category_id))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>      [,1]          [,2]
+ [1,] &quot;Sports&quot;      &quot;74&quot;
+ [2,] &quot;Foreign&quot;     &quot;73&quot;
+ [3,] &quot;Family&quot;      &quot;69&quot;
+ [4,] &quot;Documentary&quot; &quot;68&quot;
+ [5,] &quot;Animation&quot;   &quot;66&quot;
+ [6,] &quot;Action&quot;      &quot;64&quot;
+ [7,] &quot;New&quot;         &quot;63&quot;
+ [8,] &quot;Drama&quot;       &quot;62&quot;
+ [9,] &quot;Games&quot;       &quot;61&quot;
+[10,] &quot;Sci-Fi&quot;      &quot;61&quot;
+[11,] &quot;Children&quot;    &quot;60&quot;
+[12,] &quot;Comedy&quot;      &quot;58&quot;
+[13,] &quot;Classics&quot;    &quot;57&quot;
+[14,] &quot;Travel&quot;      &quot;57&quot;
+[15,] &quot;Horror&quot;      &quot;56&quot;
+[16,] &quot;Music&quot;       &quot;51&quot;</code></pre>
+</div>
+</div>
+<p>Use SQL query to get the same result:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dbGetQuery</span>(sakila, <span class="st">&quot;SELECT c.name,COUNT(fc.film_id) as number FROM film_category fc JOIN category c ON fc.category_id = c.category_id GROUP BY c.name ORDER BY number DESC&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>          name number
+1       Sports     74
+2      Foreign     73
+3       Family     69
+4  Documentary     68
+5    Animation     66
+6       Action     64
+7          New     63
+8        Drama     62
+9       Sci-Fi     61
+10       Games     61
+11    Children     60
+12      Comedy     58
+13      Travel     57
+14    Classics     57
+15      Horror     56
+16       Music     51</code></pre>
+</div>
+</div>
+</section>
+<section id="c.-1" class="level3">
+<h3 class="anchored" data-anchor-id="c.-1">c.</h3>
+<p>Extract <code>customer</code>, <code>address</code>, <code>city</code> and <code>country</code>:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>customer<span class="ot">&lt;-</span><span class="fu">dbGetQuery</span>(sakila,<span class="st">&quot;SELECT * FROM customer&quot;</span>)</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>address<span class="ot">&lt;-</span><span class="fu">dbGetQuery</span>(sakila,<span class="st">&quot;SELECT * FROM address&quot;</span>)</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>city<span class="ot">&lt;-</span><span class="fu">dbGetQuery</span>(sakila,<span class="st">&quot;SELECT * FROM city&quot;</span>)</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>country<span class="ot">&lt;-</span><span class="fu">dbGetQuery</span>(sakila,<span class="st">&quot;SELECT * FROM country&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>I use <a href="https://www.statmethods.net/management/merging.html"><code>merge</code></a> to merge these four data_frames together on their foreign keys:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>cust_address<span class="ot">&lt;-</span><span class="fu">merge</span>(customer,address,<span class="at">by=</span><span class="st">&quot;address_id&quot;</span>)</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>cust_address_city<span class="ot">&lt;-</span><span class="fu">merge</span>(cust_address,city,<span class="at">by=</span><span class="st">&quot;city_id&quot;</span>)</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>cust_address_city_country<span class="ot">&lt;-</span><span class="fu">merge</span>(cust_address_city,country,<span class="at">by=</span><span class="st">&quot;country_id&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>United Kingdom have exactly 9 customers:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>country_table<span class="ot">&lt;-</span><span class="fu">table</span>(cust_address_city_country<span class="sc">$</span>country)</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>country_name <span class="ot">&lt;-</span> country_table[country_table <span class="sc">==</span> <span class="dv">9</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>United Kingdom 
+             9 </code></pre>
+</div>
+</div>
+<p>Use SQL query to get the same result:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dbGetQuery</span>(sakila, <span class="st">&quot;SELECT country.country,COUNT(cust.customer_id) as number FROM customer cust JOIN address a ON cust.address_id=a.address_id JOIN city ON a.city_id=city.city_id JOIN country ON city.country_id=country.country_id GROUP BY country.country HAVING number=9&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>         country number
+1 United Kingdom      9</code></pre>
+</div>
+</div>
 </section>
 </section>
 
