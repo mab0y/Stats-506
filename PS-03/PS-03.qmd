@@ -9,11 +9,11 @@ toc: true
 ---
 [Link to GitHub](https://github.com/mab0y/Stats-506/tree/main/PS-03) 
 
-I have attached all relevant resources and links that helped me complete this problem in the form of hyperlinks.
+I have provided hyperlinks to all pertinent resources and references that assisted me in addressing this problem.
 
 ## Problem 1 - Vision
 ### a.
-Import `DEMO_D.XPT` and save it to `DEMO_D.dta` file:
+Import the `DEMO_D.XPT` file and save the data to a new file named `DEMO_D.dta`:
 ```stata
 . cd C:\Users\mab0y\OneDrive\文档\Stats-506\PS-03
 C:\Users\mab0y\OneDrive\文档\Stats-506\PS-03
@@ -23,8 +23,7 @@ C:\Users\mab0y\OneDrive\文档\Stats-506\PS-03
 . save DEMO_D
 file DEMO_D.dta saved
 ```
-
-Import `VIX_D.XPT` and [merge](https://www.stata.com/manuals/dmerge.pdf) it with `DEMO_D`, create a new database called `MERGED`:
+Import the `VIX_D.XPT` file from the provided link. Utilize the [merge command](https://www.stata.com/manuals/dmerge.pdf) to combine it with the `DEMO_D` dataset. Upon completion of this step, generate a new database named `MERGED` ensuring it encompasses a total of 6,980 rows.
 ```stata
 . import sasxport5 VIX_D.XPT
 
@@ -44,7 +43,7 @@ file MERGED.dta saved
 ```
 
 ### b.
-Generate a new variable `viq220_1` which drop `Don't know` and `Missing` values and convert `viq220` to dummy variables:
+Create a new variable named `viq220_1`. Exclude any entries with `Don't know` and `Missing` values. Next, transform `viq220_1` into dummy variables, assigning a value of 1 for `Yes` and 0 for `No`:
 ```stata
 . gen viq220_1 = .
 (6,980 missing values generated)
@@ -56,8 +55,7 @@ Generate a new variable `viq220_1` which drop `Don't know` and `Missing` values 
 (2,765 real changes made)
 ```
 
-Create classification on age based on respondents age. Here I used [floor function](https://www.statalist.org/forums/forum/general-stata-discussion/general/1367450-rounding-down-every-output-to-integral-numbers
-) to round down to the nearest multiple of ten combining with a [loop](https://stackoverflow.com/questions/26857269/how-to-change-string-value-label) to create this classification:
+Classify respondents based on their age in 10-year increments. To achieve this, I utilized the [floor function](https://www.statalist.org/forums/forum/general-stata-discussion/general/1367450-rounding-down-every-output-to-integral-numbers) to round ages down to the nearest decade. Then I employed a [loop]((https://stackoverflow.com/questions/26857269/how-to-change-string-value-label)) to generate this age-based classification:
 ```stata
 . gen ridageyr_1 = floor(ridageyr/10)*10
 
@@ -79,7 +77,7 @@ Create classification on age based on respondents age. Here I used [floor functi
 (358 real changes made)
 (0 real changes made)
 ```
-Use collapse to create the table:
+Utilize the collapse function to generate the table:
 ```stata
 . preserve
 
@@ -104,7 +102,7 @@ Use collapse to create the table:
 . restore
 ```
 ### c.
-Generate dummy variables based on `ridreth1`:
+Create dummy variables derived from the `ridreth1`:
 ```stata
 . gen mexican_american_dummy = (ridreth1 == 1)
 
@@ -114,7 +112,7 @@ Generate dummy variables based on `ridreth1`:
 
 . gen non_hispanic_black_dummy = (ridreth1 == 4)
 ```
-Generate a new variable `riagendr_1` to convert `riagendr` to dummy variables and add label `female` and `male` to it:
+Create a new variable named `riagendr_1` by converting the `riagendr` into dummy variables. Assign the labels `female` and `male` to these variables:
 ```stata
 . gen riagendr_1 = (riagendr==1)
 
@@ -122,7 +120,7 @@ Generate a new variable `riagendr_1` to convert `riagendr` to dummy variables an
 
 . label values riagendr_1 sex
 ```
-Fit the three logistic logistic regression:
+Fit three separate logistic logistic regression:
 ```stata
 . logit viq220_1 ridageyr, or
 
@@ -206,7 +204,7 @@ Note: _cons estimates baseline odds.
 . estimates store model3
 ```
 
-This is the [summary table](https://stats.oarc.ucla.edu/stata/faq/how-can-i-use-estout-to-make-regression-tables-that-look-like-those-in-journal-articles/) presenting the estimation results:
+Here is the [summary table](https://stats.oarc.ucla.edu/stata/faq/how-can-i-use-estout-to-make-regression-tables-that-look-like-those-in-journal-articles/) presenting the estimation results:
 ```
 . estout model1 model2 model3, cells(b(star fmt(3)) se(par fmt(2))) eform stats(N r2_p aic,fmt(0 3 3
 > ))
@@ -240,9 +238,9 @@ aic              8475.887        8287.761        7909.808
 ```
 
 ### d.
-In the second and third logistic regressions, the `riagendr_1` variable is significant under the 1% confidence level, so the odds of men and women being wears of glasess/contact lenses for distance vision differs.
+In both the second and third logistic regression models, the variable `riagendr_1` is statistically significant at the 1% confidence level. This suggests a significant difference in the odds of men and women wearing glasses or contact lenses for distance vision.
 
-Use [two sample z-test](https://www.ssc.wisc.edu/sscc/pubs/sfs/sfs-prtest.htm) to test whether the proportion of wearers of glasses/contact lenses for distance vision differs between men and women:
+Employ the [two-sample z-test](https://www.ssc.wisc.edu/sscc/pubs/sfs/sfs-prtest.htm) to determine if there's a significant difference in the proportion of men and women who wear glasses or contact lenses for distance vision:
 ```stata
 . prtest viq220_1, by(riagendr_1)
 
@@ -263,7 +261,7 @@ Two-sample test of proportions                female: Number of obs =     3350
     Ha: diff < 0                 Ha: diff != 0                 Ha: diff > 0
  Pr(Z < z) = 1.0000         Pr(|Z| > |z|) = 0.0000          Pr(Z > z) = 0.0000
 ```
-The difference and standard error under null hypothesis are calculated to get Z-stat. p-value = 0.0000, we should reject the null hypothesis. The proportion of wearers of glasses/contact lenses for distance vision differs between men and women.
+The difference and the standard error were calculated under the null hypothesis to obtain the Z-statistic. With a p-value of 0.0000, we reject the null hypothesis. This indicates a significant difference in the proportion of men and women who wear glasses or contact lenses for distance vision.
 
 ## Problem 2 - Sakila
 ### a.
@@ -283,7 +281,7 @@ Extract `film_category` and `category`:
 film_category<-dbGetQuery(sakila,"SELECT * FROM film_category")
 category<-dbGetQuery(sakila,"SELECT * FROM category")
 ```
-`film_id` and `category_id` are one to one relationship, Just need to sort the table of each `category_id` and find the corresponding `category_name` to each `category_id`.Sports is the most common in the data and 74 movies are of this genre:
+`film_id` and `category_id` maintain a one-to-one relationship. To determine the most prevalent genre, it's essential to sort the table by each `category_id` and match the respective `category_name`. The data reveals that `Sports` is the most predominant genre, comprising 74 movies.":
 ```{r}
 max_category_id<-sort(table(film_category$category_id),decreasing = TRUE)
 max_category_name<-cbind(category$name[as.numeric(names(max_category_id))],as.vector(max_category_id))
@@ -306,7 +304,7 @@ address<-dbGetQuery(sakila,"SELECT * FROM address")
 city<-dbGetQuery(sakila,"SELECT * FROM city")
 country<-dbGetQuery(sakila,"SELECT * FROM country")
 ```
-I use [`merge`](https://www.statmethods.net/management/merging.html) to merge these four data_frames together on their foreign keys:
+I utilized [`merge`](https://www.statmethods.net/management/merging.html) to merge these four data_frames together on their foreign keys:
 ```{r}
 #| warning: false
 cust_address<-merge(customer,address,by="address_id")
@@ -356,19 +354,19 @@ area_code_most_common<-area_code[which.max(area_code)]
 area_code_most_common
 ```
 ### d.
-[Remove](https://stackoverflow.com/questions/9704213/remove-part-of-a-string) the part of the string before the apartment numbers by replacing it with an empty string:
+[Strip away]((https://stackoverflow.com/questions/9704213/remove-part-of-a-string)) the portion of the string preceding the apartment numbers, replacing it with an empty string to get the apartment number:
 ```{r}
 address_apt<-us_500$address[grep(".+#", us_500$address)]
 apt_num<-gsub(pattern=".+#", replacement = "", address_apt)
 hist(log(as.numeric(apt_num)))
 ```
 ### e.
-Take the leading digit and create a bar chart. It appears that the apartment numbers do not adhere to Benford's Law, suggesting that they may not represent real data:
+Extract the leading digit from the apartment numbers and represent the distribution using a bar chart. Based on the visual representation, the apartment numbers do not seem to conform to Benford's Law, implying that these numbers might not be indicative of genuine data:
 ```{r}
 apt_num_leading<-as.numeric(substr(apt_num,1,1))
 barplot(table(apt_num_leading))
 ```
-The probability distribution of the real data significantly diverges from Benford's law distribution:
+The probability distribution observed in the real data markedly deviates from the expected distribution according to Benford's Law:
 ```{r}
 apt_num_leading_dist<-table(apt_num_leading)/length(apt_num_leading)
 benford<-log(1+1/c(1:9),base=10)
@@ -377,18 +375,18 @@ names(benford)<-1:9
 cbind(apt_num_leading_dist,benford)
 ```
 ### f.
-Split the address string by spaces, extract the first part (which is the street number), convert it to a numeric value, and then take the modulus of it by 10 to obtain the last digit:
+Split the address string at spaces and retrieve the initial segment (representing the street number). Convert this segment into a numeric format by calculating the modulus of the numeric value by 10 to determine its last digit:
 ```{r}
 st_split<-strsplit(us_500$address," ")
 st_num <- as.numeric(sapply(st_split, function(x) x[1]))
 st_num_last<-st_num %%10
 st_num_last<-st_num_last[st_num_last>0]
 ```
-Take the last digit and create a bar chart. It appears that the apartment numbers do not adhere to Benford's Law, suggesting that they may not represent real data:
+Visualize the last digit from the apartment numbers using a bar chart. The apartment numbers don't seem to align with Benford's Law, implying that these numbers might not be indicative of genuine data:
 ```{r}
 barplot(table(st_num_last))
 ```
-The probability distribution of the real data significantly diverges from Benford's law distribution:
+The distribution observed in the data deviates from what's anticipated under Benford's Law:
 ```{r}
 st_num_last_dist<-table(st_num_last)/length(st_num_last)
 cbind(st_num_last_dist,benford)
