@@ -33,4 +33,15 @@ flights_data_dest_summary <- flights_data_dest %>%
 
 print(flights_data_dest_summary,n=Inf)
 
+flights_data_model <- flights_data %>% left_join(planes, by = "tailnum")
+
+flights_data_model_summary <- flights_data_model %>%
+  group_by(model) %>%
+  summarize(average_speed=sum(distance)/sum(air_time/60), count=n())%>%
+  filter(!is.na(model)) %>%
+  arrange(desc(average_speed)) %>%
+  ungroup() %>%
+  head(1)
+
+print(flights_data_model_summary,n=Inf)
   
