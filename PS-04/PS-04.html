@@ -3033,6 +3033,10 @@ vertical-align: -.125em;
   <li><a href="#problem-3---sas" id="toc-problem-3---sas" class="nav-link" data-scroll-target="#problem-3---sas">Problem 3 - SAS</a>
   <ul class="collapse">
   <li><a href="#a.-1" id="toc-a.-1" class="nav-link" data-scroll-target="#a.-1">a.</a></li>
+  <li><a href="#b.-1" id="toc-b.-1" class="nav-link" data-scroll-target="#b.-1">b.</a></li>
+  <li><a href="#c." id="toc-c." class="nav-link" data-scroll-target="#c.">c.</a></li>
+  <li><a href="#d." id="toc-d." class="nav-link" data-scroll-target="#d.">d.</a></li>
+  <li><a href="#e." id="toc-e." class="nav-link" data-scroll-target="#e.">e.</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -3330,7 +3334,8 @@ vertical-align: -.125em;
 <h2 class="anchored" data-anchor-id="problem-3---sas">Problem 3 - SAS</h2>
 <section id="a.-1" class="level3">
 <h3 class="anchored" data-anchor-id="a.-1">a.</h3>
-<p>California has the highest percentage of records and 2.08956% of all records correspond to Michigan</p>
+<p><a href="https://github.com/mab0y/Stats-506/blob/main/PS-04/a-results.html">a-results</a></p>
+<p>California has the highest percentage of records and 2.08956% of all records correspond to Michigan:</p>
 <pre class="sas"><code>%let in_path = ~/PS04_Problem3_SAS/input_data;
 %let out_path = ~/PS04_Problem3_SAS/output_data; 
 libname in_lib &quot;&amp;in_path.&quot;; 
@@ -3379,6 +3384,77 @@ run;
 
 proc print data = out_lib.ess_by_states_recs2020_pct_sort;
 proc print data = out_lib.michigan_pct;</code></pre>
+</section>
+<section id="b.-1" class="level3">
+<h3 class="anchored" data-anchor-id="b.-1">b.</h3>
+<p><a href="https://github.com/mab0y/Stats-506/blob/main/PS-04/b-results.html">b-results</a></p>
+<pre class="sas"><code>%let in_path = ~/PS04_Problem3_SAS/input_data;
+%let out_path = ~/PS04_Problem3_SAS/output_data; 
+libname in_lib &quot;&amp;in_path.&quot;; 
+libname out_lib &quot;&amp;out_path.&quot;;
+
+data out_lib.positive_electricity_cost;
+    set in_lib.recs2020_public_v5;
+    where dollarel &gt; 0;
+run;
+
+proc univariate data=out_lib.positive_electricity_cost;
+    var dollarel;
+    histogram dollarel;
+run;</code></pre>
+</section>
+<section id="c." class="level3">
+<h3 class="anchored" data-anchor-id="c.">c.</h3>
+<p><a href="https://github.com/mab0y/Stats-506/blob/main/PS-04/c-results.html">c-results</a></p>
+<pre class="sas"><code>%let in_path = ~/PS04_Problem3_SAS/input_data;
+%let out_path = ~/PS04_Problem3_SAS/output_data; 
+libname in_lib &quot;&amp;in_path.&quot;; 
+libname out_lib &quot;&amp;out_path.&quot;;
+
+data out_lib.positive_electricity_logcost;
+    set in_lib.recs2020_public_v5;
+    where dollarel &gt; 0;
+    log_dollarel = log(dollarel);
+run;
+
+proc univariate data=out_lib.positive_electricity_logcost;
+    var log_dollarel;
+    histogram log_dollarel;
+run;</code></pre>
+</section>
+<section id="d." class="level3">
+<h3 class="anchored" data-anchor-id="d.">d.</h3>
+<p><a href="https://github.com/mab0y/Stats-506/blob/main/PS-04/d-results.html">d-results</a></p>
+<pre class="sas"><code>%let in_path = ~/PS04_Problem3_SAS/input_data;
+%let out_path = ~/PS04_Problem3_SAS/output_data; 
+libname in_lib &quot;&amp;in_path.&quot;; 
+libname out_lib &quot;&amp;out_path.&quot;;
+
+proc reg data=out_lib.positive_electricity_logcost;
+    model log_dollarel=totrooms prkgplc1;
+    weight nweight;
+    where prkgplc1 in (0, 1);
+    output out=out_lib.predicted_logcost predicted=predicted_log_dollarel;
+run;
+quit;</code></pre>
+</section>
+<section id="e." class="level3">
+<h3 class="anchored" data-anchor-id="e.">e.</h3>
+<p><a href="https://github.com/mab0y/Stats-506/blob/main/PS-04/e-results.html">e-results</a></p>
+<pre class="sas"><code>%let in_path = ~/PS04_Problem3_SAS/input_data;
+%let out_path = ~/PS04_Problem3_SAS/output_data; 
+libname in_lib &quot;&amp;in_path.&quot;; 
+libname out_lib &quot;&amp;out_path.&quot;;
+
+data actual_predicted;
+    set out_lib.predicted_logcost(keep=predicted_log_dollarel dollarel);
+    predicted_dollarel = exp(predicted_log_dollarel);
+    drop predicted_log_dollarel;
+run;
+
+proc sgplot data=actual_predicted;
+   scatter y=predicted_dollarel x=dollarel;
+run;</code></pre>
 </section>
 </section>
 

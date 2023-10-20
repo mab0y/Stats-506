@@ -7,13 +7,17 @@ format:
     embed-resources: true
 toc: true
 ---
-[Link to GitHub](https://github.com/mab0y/Stats-506/tree/main/PS-04) 
+
+[Link to GitHub](https://github.com/mab0y/Stats-506/tree/main/PS-04)
 
 I have provided hyperlinks to all pertinent resources and references that assisted me in addressing this problem.
 
 ## Problem 1 - Tidyverse
+
 ### a.
+
 Import the libraries and save data it to the environment:
+
 ```{r}
 #| include = FALSE
 library(tidyverse)
@@ -30,11 +34,13 @@ weather_data <- weather
 ```
 
 Use [`left_join`](https://stackoverflow.com/questions/1299871/how-to-join-merge-data-frames-inner-outer-left-right) to merge `flights` and `airports` by `origin` and `faa`:
+
 ```{r}
 flights_data_origin <- flights_data %>% left_join(airports_data, by = c("origin" = "faa"))
 ```
 
 Group flights by airport name and calculate the mean and median departure delay per airport:
+
 ```{r}
 flights_data_origin_summary <- flights_data_origin %>%
   group_by(name) %>%
@@ -50,11 +56,13 @@ print(flights_data_origin_summary,n=Inf)
 ```
 
 Repeat the steps for `dest` and `faa`:
+
 ```{r}
 flights_data_dest <- flights_data %>% left_join(airports_data, by = c("dest" = "faa"))
 ```
-[Count](https://stackoverflow.com/questions/22767893/count-number-of-rows-by-group-using-dplyr
-) the rows of each group and exclude any destination with under 10 flights:
+
+[Count](https://stackoverflow.com/questions/22767893/count-number-of-rows-by-group-using-dplyr) the rows of each group and exclude any destination with under 10 flights:
+
 ```{r}
 flights_data_dest_summary <- flights_data_dest %>%
   group_by(name) %>%
@@ -71,11 +79,15 @@ print(flights_data_dest_summary,n=Inf)
 ```
 
 ### b.
+
 Merge `flights` and `planes` by `tailnum`:
+
 ```{r}
 flights_data_model <- flights_data %>% left_join(planes, by = "tailnum")
 ```
+
 Calculate average speed for each model:
+
 ```{r}
 flights_data_model_summary <- flights_data_model %>%
   group_by(model) %>%
@@ -92,6 +104,7 @@ print(flights_data_model_summary,n=Inf)
 ```
 
 ## Problem 2 - get_temp()
+
 ```{r}
 #| echo: false
 nnmaps <- read.csv("~/chicago-nmmaps.csv")
@@ -159,9 +172,12 @@ get_temp("November", 1999, data =nnmaps, celsius = TRUE,
 ```
 
 ## Problem 3 - SAS
+
 ### a.
-California has the highest percentage of records and 2.08956% of all records correspond to Michigan
-```sas
+[a-results](https://github.com/mab0y/Stats-506/blob/main/PS-04/a-results.html) 
+
+California has the highest percentage of records and 2.08956% of all records correspond to Michigan:
+``` sas
 %let in_path = ~/PS04_Problem3_SAS/input_data;
 %let out_path = ~/PS04_Problem3_SAS/output_data; 
 libname in_lib "&in_path."; 
@@ -210,4 +226,79 @@ run;
 
 proc print data = out_lib.ess_by_states_recs2020_pct_sort;
 proc print data = out_lib.michigan_pct;
+```
+
+### b.
+[b-results](https://github.com/mab0y/Stats-506/blob/main/PS-04/b-results.html) 
+```sas
+%let in_path = ~/PS04_Problem3_SAS/input_data;
+%let out_path = ~/PS04_Problem3_SAS/output_data; 
+libname in_lib "&in_path."; 
+libname out_lib "&out_path.";
+
+data out_lib.positive_electricity_cost;
+	set in_lib.recs2020_public_v5;
+	where dollarel > 0;
+run;
+
+proc univariate data=out_lib.positive_electricity_cost;
+    var dollarel;
+    histogram dollarel;
+run;
+```
+
+### c.
+[c-results](https://github.com/mab0y/Stats-506/blob/main/PS-04/c-results.html) 
+```sas
+%let in_path = ~/PS04_Problem3_SAS/input_data;
+%let out_path = ~/PS04_Problem3_SAS/output_data; 
+libname in_lib "&in_path."; 
+libname out_lib "&out_path.";
+
+data out_lib.positive_electricity_logcost;
+	set in_lib.recs2020_public_v5;
+	where dollarel > 0;
+	log_dollarel = log(dollarel);
+run;
+
+proc univariate data=out_lib.positive_electricity_logcost;
+    var log_dollarel;
+    histogram log_dollarel;
+run;
+```
+
+### d.
+[d-results](https://github.com/mab0y/Stats-506/blob/main/PS-04/d-results.html) 
+```sas
+%let in_path = ~/PS04_Problem3_SAS/input_data;
+%let out_path = ~/PS04_Problem3_SAS/output_data; 
+libname in_lib "&in_path."; 
+libname out_lib "&out_path.";
+
+proc reg data=out_lib.positive_electricity_logcost;
+    model log_dollarel=totrooms prkgplc1;
+    weight nweight;
+    where prkgplc1 in (0, 1);
+    output out=out_lib.predicted_logcost predicted=predicted_log_dollarel;
+run;
+quit;
+```
+
+### e.
+[e-results](https://github.com/mab0y/Stats-506/blob/main/PS-04/e-results.html) 
+```sas
+%let in_path = ~/PS04_Problem3_SAS/input_data;
+%let out_path = ~/PS04_Problem3_SAS/output_data; 
+libname in_lib "&in_path."; 
+libname out_lib "&out_path.";
+
+data actual_predicted;
+	set out_lib.predicted_logcost(keep=predicted_log_dollarel dollarel);
+    predicted_dollarel = exp(predicted_log_dollarel);
+    drop predicted_log_dollarel;
+run;
+
+proc sgplot data=actual_predicted;
+   scatter y=predicted_dollarel x=dollarel;
+run;
 ```
