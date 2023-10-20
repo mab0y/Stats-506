@@ -70,7 +70,7 @@ flights_data_dest_summary <- flights_data_dest %>%
 print(flights_data_dest_summary,n=Inf)
 ```
 
-b.
+### b.
 Merge `flights` and `planes` by `tailnum`:
 ```{r}
 flights_data_model <- flights_data %>% left_join(planes, by = "tailnum")
@@ -89,4 +89,125 @@ flights_data_model_summary <- flights_data_model %>%
 ```{r}
 #| echo: false
 print(flights_data_model_summary,n=Inf)
+```
+
+## Problem 2 - get_temp()
+```{r}
+#| echo: false
+nnmaps <- read.csv("~/chicago-nmmaps.csv")
+nnmaps$date <- as.Date(nnmaps$date)
+```
+
+```{r}
+#| code-fold: true
+#| code-summary: "Show the code"
+#' get_temp()
+#'
+#' @param month Month, either a numeric 1-12 or a string
+#' @param year A numeric year
+#' @param data The data set to obtain data from
+#' @param celsius Logically indicating whther the results should be in celsius. Default FALSE
+#' @param average_fn  A function with which to compute the mean. Default is mean
+#'
+#' @return The average temperature for a given month
+get_temp <- function(month, year, data, celsius=FALSE, average_fn=mean){
+  month_names <- c(
+    "January", "February", "March", "April", "May", "June", 
+    "July", "August", "September", "October", "November", "December"
+  )
+  
+  if (year>=1997 && year<=2000){year_num <- year}
+    else{
+      stop("Invalid Year")
+    }
+
+  if (is.character(month)) {
+    month_num <- which(grepl(pattern = month, x = month_names, ignore.case = TRUE))
+  }
+    else if (is.numeric(month) && month >= 1 && month <= 12) {
+    month_num <- month
+    } 
+      else {
+        stop("Invalid Month")
+      }
+
+  result <- data %>% 
+    filter(year(date) == year_num & month(date) == month_num) %>%
+      summarize(avg_temp = average_fn(temp))
+  
+  if(celsius) {
+    result <- result %>%
+      mutate(avg_temp = (avg_temp - 32) * 5/9)
+  }
+  
+  return(result$avg_temp)
+}
+```
+
+```{r}
+#| error: true
+get_temp("Apr", 1999, data = nnmaps)
+get_temp("Apr", 1999, data = nnmaps, celsius = TRUE)
+get_temp(10, 1998, data = nnmaps, average_fn = median)
+get_temp(13, 1998, data = nnmaps)
+get_temp(2, 2005, data = nnmaps)
+get_temp("November", 1999, data =nnmaps, celsius = TRUE,
+         average_fn = function(x) {
+           x %>% sort -> x
+           x[2:(length(x) - 1)] %>% mean %>% return
+         })
+```
+
+## Problem 3 - SAS
+### a.
+California has the highest percentage of records and 2.08956% of all records correspond to Michigan
+```sas
+%let in_path = ~/PS04_Problem3_SAS/input_data;
+%let out_path = ~/PS04_Problem3_SAS/output_data; 
+libname in_lib "&in_path."; 
+libname out_lib "&out_path.";
+
+data in_lib.recs2020_public_v5;
+  set in_lib.recs2020_public_v5;
+  nweight_sq = nweight * nweight;
+run; 
+
+proc summary data=in_lib.recs2020_public_v5;
+  class state_name; 
+  output out=out_lib.ess_by_states_recs2020
+    sum(nweight) = num
+    sum(nweight_sq) = den;
+run; 
+
+data out_lib.ess_by_states_recs2020; 
+  set out_lib.ess_by_states_recs2020;
+  where _type_ = 1; 
+  ess = num * num / den; 
+  drop num den _type_;
+run;
+
+proc summary data=out_lib.ess_by_states_recs2020;
+  var ess;
+  output out = out_lib.ess_total_sum (drop=_type_ _freq_) 
+  sum=total_ess;
+run;
+
+data out_lib.ess_by_states_recs2020_pct;
+  set out_lib.ess_by_states_recs2020;
+  if _n_ = 1 then set out_lib.ess_total_sum;
+  pct = ess / total_ess * 100;
+run;
+
+proc sort data=out_lib.ess_by_states_recs2020_pct
+  out = out_lib.ess_by_states_recs2020_pct_sort;
+  by descending pct;
+run;
+
+data out_lib.michigan_pct;
+    set out_lib.ess_by_states_recs2020_pct;
+    where state_name = "Michigan";
+run;
+
+proc print data = out_lib.ess_by_states_recs2020_pct_sort;
+proc print data = out_lib.michigan_pct;
 ```

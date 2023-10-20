@@ -44,4 +44,3 @@ flights_data_model_summary <- flights_data_model %>%
   head(1)
 
 print(flights_data_model_summary,n=Inf)
-  
