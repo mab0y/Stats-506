@@ -302,3 +302,141 @@ proc sgplot data=actual_predicted;
    scatter y=predicted_dollarel x=dollarel;
 run;
 ```
+
+## Problem 4 - Multiple tools
+### a.
+The Codebook was generated using the `codebook *` command in Stata, which provides a comprehensive overview of all variables in the dataset in a single run.
+
+### b.
+```sas
+%let in_path = ~/PS04_Problem3_SAS/input_data;
+%let out_path = ~/PS04_Problem3_SAS/output_data; 
+libname in_lib "&in_path."; 
+libname out_lib "&out_path.";
+
+proc sql;
+	create table out_lib.public2022 as
+	select CaseID, B3, ND2, B7_b, GH1, ppeducat, race_5cat, weight_pop
+	from in_lib.public2022;
+
+quit;
+run;
+
+proc export
+    data=out_lib.public2022
+    outfile="&out_path./public2022.dta"
+    dbms=dta replace;
+run;
+```
+
+### c.
+```stata
+use "C:\Users\mab0y\Downloads\public2022.dta"
+```
+
+### d.
+```stata
+. display _N
+11667
+```
+
+### e.
+```stata
+. gen B3_binary=(B3>=3)
+
+. B3_binary
+```
+
+### f.
+```stata
+. svyset CaseID [pw=weight_pop]
+
+Sampling weights: weight_pop
+             VCE: linearized
+     Single unit: missing
+        Strata 1: <one>
+ Sampling unit 1: CaseID
+           FPC 1: <zero>
+
+. svy:logit c.B3_binary i.ND2 i.B7_b i.GH1 i.ppeducat i.race_5cat
+(running logit on estimation sample)
+
+Survey: Logistic regression
+
+Number of strata =      1                        Number of obs   =      11,667
+Number of PSUs   = 11,667                        Population size = 255,114,223
+                                                 Design df       =      11,666
+                                                 F(17, 11650)    =       56.70
+                                                 Prob > F        =      0.0000
+
+------------------------------------------------------------------------------
+             |             Linearized
+   B3_binary | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+         ND2 |
+          2  |   .0816722   .0925755     0.88   0.378    -.0997913    .2631356
+          3  |   .0618535   .0854686     0.72   0.469    -.1056792    .2293863
+          4  |   .2533887   .2045978     1.24   0.216    -.1476572    .6544347
+          5  |    .229354   .1672799     1.37   0.170    -.0985426    .5572505
+             |
+        B7_b |
+          2  |   1.110649   .0488662    22.73   0.000     1.014863    1.206435
+          3  |   1.806251   .0796863    22.67   0.000     1.650052    1.962449
+          4  |   2.485125   .3463415     7.18   0.000     1.806238    3.164013
+             |
+         GH1 |
+          2  |  -.0702921    .056382    -1.25   0.213    -.1808102     .040226
+          3  |   .0190607   .0587346     0.32   0.746    -.0960689    .1341904
+          4  |   .3465325   .0994184     3.49   0.000     .1516557    .5414092
+             |
+    ppeducat |
+          2  |   .0767668   .1036364     0.74   0.459    -.1263778    .2799115
+          3  |   .1075004   .1008067     1.07   0.286    -.0900975    .3050983
+          4  |   .2288346    .099574     2.30   0.022     .0336528    .4240164
+             |
+   race_5cat |
+          2  |   .7060141   .0810818     8.71   0.000     .5470803     .864948
+          3  |   .1635498   .0711263     2.30   0.021     .0241303    .3029693
+          4  |   .4567994   .1259942     3.63   0.000     .2098298    .7037691
+          5  |  -.0210142   .1659436    -0.13   0.899    -.3462915    .3042631
+             |
+       _cons |  -.4852955   .1301287    -3.73   0.000    -.7403696   -.2302214
+------------------------------------------------------------------------------
+```
+From the logistic regression results, the dummy variable `ND2`, which captures respondents' expectations about the chance of experiencing a natural disaster or severe weather event in the next 5 years, is not statistically significant at the 10% significance level. This suggests that, after controlling for other variables, whether the respondent’s family is better off, the same, or worse off finanicially compared to 12 month’s ago cannot be predicted by thinking that the chance of experiencing a natural disaster or severe weather event will be higher, lower or about the same in 5 years.
+
+### g.
+```{r}
+library(haven)
+dat <- read_dta("C:/Users/mab0y/Downloads/public2022.dta")
+```
+
+### h.
+Sanitize the data:
+```{r}
+dat$B3_binary <- as.numeric(dat$B3>=3)
+dat$ND2 <- as.factor(dat$ND2)
+dat$B7_b <- as.factor(dat$B7_b)
+dat$GH1 <- as.factor(dat$GH1)
+dat$ppeducat <- as.factor(dat$ppeducat)
+dat$race_5cat <- as.factor(dat$race_5cat)
+```
+Conduct the regression, here I refer to the [answer](# https://stats.stackexchange.com/questions/504209/understanding-the-deviance-and-pseudo-r2-from-a-glm) to calculate pseudo-R2
+```{r}
+#| include: false
+library(survey)
+```
+
+```{r}
+#| warning: false
+survey_design <- svydesign(id = ~ CaseID, weight = ~ weight_pop, data = dat)
+
+residual_model<-svyglm(B3_binary ~ ND2 + B7_b + GH1 + ppeducat + race_5cat, design=survey_design,family = "quasibinomial")
+null_model <- svyglm(B3_binary ~ 1, design = survey_design, family = binomial())
+
+pseudo_R2 <- 1 - (deviance(residual_model) / deviance(null_model))
+```
+
+```{r}
+pseudo_R2
+```

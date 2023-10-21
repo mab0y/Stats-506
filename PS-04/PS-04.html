@@ -3038,6 +3038,17 @@ vertical-align: -.125em;
   <li><a href="#d." id="toc-d." class="nav-link" data-scroll-target="#d.">d.</a></li>
   <li><a href="#e." id="toc-e." class="nav-link" data-scroll-target="#e.">e.</a></li>
   </ul></li>
+  <li><a href="#problem-4---multiple-tools" id="toc-problem-4---multiple-tools" class="nav-link" data-scroll-target="#problem-4---multiple-tools">Problem 4 - Multiple tools</a>
+  <ul class="collapse">
+  <li><a href="#a.-2" id="toc-a.-2" class="nav-link" data-scroll-target="#a.-2">a.</a></li>
+  <li><a href="#b.-2" id="toc-b.-2" class="nav-link" data-scroll-target="#b.-2">b.</a></li>
+  <li><a href="#c.-1" id="toc-c.-1" class="nav-link" data-scroll-target="#c.-1">c.</a></li>
+  <li><a href="#d.-1" id="toc-d.-1" class="nav-link" data-scroll-target="#d.-1">d.</a></li>
+  <li><a href="#e.-1" id="toc-e.-1" class="nav-link" data-scroll-target="#e.-1">e.</a></li>
+  <li><a href="#f." id="toc-f." class="nav-link" data-scroll-target="#f.">f.</a></li>
+  <li><a href="#g." id="toc-g." class="nav-link" data-scroll-target="#g.">g.</a></li>
+  <li><a href="#h." id="toc-h." class="nav-link" data-scroll-target="#h.">h.</a></li>
+  </ul></li>
   </ul>
 </nav>
 </div>
@@ -3455,6 +3466,140 @@ run;
 proc sgplot data=actual_predicted;
    scatter y=predicted_dollarel x=dollarel;
 run;</code></pre>
+</section>
+</section>
+<section id="problem-4---multiple-tools" class="level2">
+<h2 class="anchored" data-anchor-id="problem-4---multiple-tools">Problem 4 - Multiple tools</h2>
+<section id="a.-2" class="level3">
+<h3 class="anchored" data-anchor-id="a.-2">a.</h3>
+<p>The Codebook was generated using the <code>codebook *</code> command in Stata, which provides a comprehensive overview of all variables in the dataset in a single run.</p>
+</section>
+<section id="b.-2" class="level3">
+<h3 class="anchored" data-anchor-id="b.-2">b.</h3>
+<pre class="sas"><code>%let in_path = ~/PS04_Problem3_SAS/input_data;
+%let out_path = ~/PS04_Problem3_SAS/output_data; 
+libname in_lib &quot;&amp;in_path.&quot;; 
+libname out_lib &quot;&amp;out_path.&quot;;
+
+proc sql;
+    create table out_lib.public2022 as
+    select CaseID, B3, ND2, B7_b, GH1, ppeducat, race_5cat, weight_pop
+    from in_lib.public2022;
+
+quit;
+run;
+
+proc export
+    data=out_lib.public2022
+    outfile=&quot;&amp;out_path./public2022.dta&quot;
+    dbms=dta replace;
+run;</code></pre>
+</section>
+<section id="c.-1" class="level3">
+<h3 class="anchored" data-anchor-id="c.-1">c.</h3>
+<div class="sourceCode" id="cb30"><pre class="sourceCode stata code-with-copy"><code class="sourceCode stata"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="kw">use</span> <span class="st">&quot;C:\Users\mab0y\Downloads\public2022.dta&quot;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="d.-1" class="level3">
+<h3 class="anchored" data-anchor-id="d.-1">d.</h3>
+<div class="sourceCode" id="cb31"><pre class="sourceCode stata code-with-copy"><code class="sourceCode stata"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>. <span class="kw">display</span> _N</span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>11667</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="e.-1" class="level3">
+<h3 class="anchored" data-anchor-id="e.-1">e.</h3>
+<div class="sourceCode" id="cb32"><pre class="sourceCode stata code-with-copy"><code class="sourceCode stata"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>. <span class="kw">gen</span> B3_binary=(B3&gt;=3)</span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>. B3_binary</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="f." class="level3">
+<h3 class="anchored" data-anchor-id="f.">f.</h3>
+<div class="sourceCode" id="cb33"><pre class="sourceCode stata code-with-copy"><code class="sourceCode stata"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>. <span class="kw">svyset</span> CaseID [pw=weight_pop]</span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>Sampling weights: weight_pop</span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>             <span class="kw">VCE</span>: <span class="kw">linearized</span></span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a>     Single unit: <span class="fu">missing</span></span>
+<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a>        Strata 1: &lt;one&gt;</span>
+<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a> Sampling unit 1: CaseID</span>
+<span id="cb33-8"><a href="#cb33-8" aria-hidden="true" tabindex="-1"></a>           FPC 1: &lt;<span class="bn">zero</span>&gt;</span>
+<span id="cb33-9"><a href="#cb33-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-10"><a href="#cb33-10" aria-hidden="true" tabindex="-1"></a>. <span class="kw">svy</span>:<span class="kw">logit</span> c.B3_binary i.ND2 i.B7_b i.GH1 i.ppeducat i.race_5cat</span>
+<span id="cb33-11"><a href="#cb33-11" aria-hidden="true" tabindex="-1"></a>(running <span class="kw">logit</span> <span class="kw">on</span> estimation <span class="kw">sample</span>)</span>
+<span id="cb33-12"><a href="#cb33-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-13"><a href="#cb33-13" aria-hidden="true" tabindex="-1"></a>Survey: Logistic regression</span>
+<span id="cb33-14"><a href="#cb33-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-15"><a href="#cb33-15" aria-hidden="true" tabindex="-1"></a>Number <span class="kw">of</span> <span class="kw">strata</span> =      1                        Number <span class="kw">of</span> <span class="kw">obs</span>   =      11,667</span>
+<span id="cb33-16"><a href="#cb33-16" aria-hidden="true" tabindex="-1"></a>Number <span class="kw">of</span> PSUs   = 11,667                        Population <span class="kw">size</span> = 255,114,223</span>
+<span id="cb33-17"><a href="#cb33-17" aria-hidden="true" tabindex="-1"></a>                                                 Design df       =      11,666</span>
+<span id="cb33-18"><a href="#cb33-18" aria-hidden="true" tabindex="-1"></a>                                                 <span class="fu">F</span>(17, 11650)    =       56.70</span>
+<span id="cb33-19"><a href="#cb33-19" aria-hidden="true" tabindex="-1"></a>                                                 Prob &gt; <span class="fu">F</span>        =      0.0000</span>
+<span id="cb33-20"><a href="#cb33-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-21"><a href="#cb33-21" aria-hidden="true" tabindex="-1"></a>------------------------------------------------------------------------------</span>
+<span id="cb33-22"><a href="#cb33-22" aria-hidden="true" tabindex="-1"></a>             |             Linearized</span>
+<span id="cb33-23"><a href="#cb33-23" aria-hidden="true" tabindex="-1"></a>   B3_binary | Coefficient  <span class="fu">std</span>. err.      t    P&gt;|t|     [95% conf. interval]</span>
+<span id="cb33-24"><a href="#cb33-24" aria-hidden="true" tabindex="-1"></a>-------------+----------------------------------------------------------------</span>
+<span id="cb33-25"><a href="#cb33-25" aria-hidden="true" tabindex="-1"></a>         ND2 |</span>
+<span id="cb33-26"><a href="#cb33-26" aria-hidden="true" tabindex="-1"></a>          2  |   .0816722   .0925755     0.88   0.378    -.0997913    .2631356</span>
+<span id="cb33-27"><a href="#cb33-27" aria-hidden="true" tabindex="-1"></a>          3  |   .0618535   .0854686     0.72   0.469    -.1056792    .2293863</span>
+<span id="cb33-28"><a href="#cb33-28" aria-hidden="true" tabindex="-1"></a>          4  |   .2533887   .2045978     1.24   0.216    -.1476572    .6544347</span>
+<span id="cb33-29"><a href="#cb33-29" aria-hidden="true" tabindex="-1"></a>          5  |    .229354   .1672799     1.37   0.170    -.0985426    .5572505</span>
+<span id="cb33-30"><a href="#cb33-30" aria-hidden="true" tabindex="-1"></a>             |</span>
+<span id="cb33-31"><a href="#cb33-31" aria-hidden="true" tabindex="-1"></a>        B7_b |</span>
+<span id="cb33-32"><a href="#cb33-32" aria-hidden="true" tabindex="-1"></a>          2  |   1.110649   .0488662    22.73   0.000     1.014863    1.206435</span>
+<span id="cb33-33"><a href="#cb33-33" aria-hidden="true" tabindex="-1"></a>          3  |   1.806251   .0796863    22.67   0.000     1.650052    1.962449</span>
+<span id="cb33-34"><a href="#cb33-34" aria-hidden="true" tabindex="-1"></a>          4  |   2.485125   .3463415     7.18   0.000     1.806238    3.164013</span>
+<span id="cb33-35"><a href="#cb33-35" aria-hidden="true" tabindex="-1"></a>             |</span>
+<span id="cb33-36"><a href="#cb33-36" aria-hidden="true" tabindex="-1"></a>         GH1 |</span>
+<span id="cb33-37"><a href="#cb33-37" aria-hidden="true" tabindex="-1"></a>          2  |  -.0702921    .056382    -1.25   0.213    -.1808102     .040226</span>
+<span id="cb33-38"><a href="#cb33-38" aria-hidden="true" tabindex="-1"></a>          3  |   .0190607   .0587346     0.32   0.746    -.0960689    .1341904</span>
+<span id="cb33-39"><a href="#cb33-39" aria-hidden="true" tabindex="-1"></a>          4  |   .3465325   .0994184     3.49   0.000     .1516557    .5414092</span>
+<span id="cb33-40"><a href="#cb33-40" aria-hidden="true" tabindex="-1"></a>             |</span>
+<span id="cb33-41"><a href="#cb33-41" aria-hidden="true" tabindex="-1"></a>    ppeducat |</span>
+<span id="cb33-42"><a href="#cb33-42" aria-hidden="true" tabindex="-1"></a>          2  |   .0767668   .1036364     0.74   0.459    -.1263778    .2799115</span>
+<span id="cb33-43"><a href="#cb33-43" aria-hidden="true" tabindex="-1"></a>          3  |   .1075004   .1008067     1.07   0.286    -.0900975    .3050983</span>
+<span id="cb33-44"><a href="#cb33-44" aria-hidden="true" tabindex="-1"></a>          4  |   .2288346    .099574     2.30   0.022     .0336528    .4240164</span>
+<span id="cb33-45"><a href="#cb33-45" aria-hidden="true" tabindex="-1"></a>             |</span>
+<span id="cb33-46"><a href="#cb33-46" aria-hidden="true" tabindex="-1"></a>   race_5cat |</span>
+<span id="cb33-47"><a href="#cb33-47" aria-hidden="true" tabindex="-1"></a>          2  |   .7060141   .0810818     8.71   0.000     .5470803     .864948</span>
+<span id="cb33-48"><a href="#cb33-48" aria-hidden="true" tabindex="-1"></a>          3  |   .1635498   .0711263     2.30   0.021     .0241303    .3029693</span>
+<span id="cb33-49"><a href="#cb33-49" aria-hidden="true" tabindex="-1"></a>          4  |   .4567994   .1259942     3.63   0.000     .2098298    .7037691</span>
+<span id="cb33-50"><a href="#cb33-50" aria-hidden="true" tabindex="-1"></a>          5  |  -.0210142   .1659436    -0.13   0.899    -.3462915    .3042631</span>
+<span id="cb33-51"><a href="#cb33-51" aria-hidden="true" tabindex="-1"></a>             |</span>
+<span id="cb33-52"><a href="#cb33-52" aria-hidden="true" tabindex="-1"></a>       <span class="dt">_cons</span> |  -.4852955   .1301287    -3.73   0.000    -.7403696   -.2302214</span>
+<span id="cb33-53"><a href="#cb33-53" aria-hidden="true" tabindex="-1"></a>------------------------------------------------------------------------------</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>From the logistic regression results, the dummy variable <code>ND2</code>, which captures respondents’ expectations about the chance of experiencing a natural disaster or severe weather event in the next 5 years, is not statistically significant at the 10% significance level. This suggests that, after controlling for other variables, whether the respondent’s family is better off, the same, or worse off finanicially compared to 12 month’s ago cannot be predicted by thinking that the chance of experiencing a natural disaster or severe weather event will be higher, lower or about the same in 5 years.</p>
+</section>
+<section id="g." class="level3">
+<h3 class="anchored" data-anchor-id="g.">g.</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(haven)</span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> <span class="fu">read_dta</span>(<span class="st">&quot;C:/Users/mab0y/Downloads/public2022.dta&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="h." class="level3">
+<h3 class="anchored" data-anchor-id="h.">h.</h3>
+<p>Sanitize the data:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>dat<span class="sc">$</span>B3_binary <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(dat<span class="sc">$</span>B3<span class="sc">&gt;=</span><span class="dv">3</span>)</span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>dat<span class="sc">$</span>ND2 <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(dat<span class="sc">$</span>ND2)</span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>dat<span class="sc">$</span>B7_b <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(dat<span class="sc">$</span>B7_b)</span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>dat<span class="sc">$</span>GH1 <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(dat<span class="sc">$</span>GH1)</span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a>dat<span class="sc">$</span>ppeducat <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(dat<span class="sc">$</span>ppeducat)</span>
+<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a>dat<span class="sc">$</span>race_5cat <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(dat<span class="sc">$</span>race_5cat)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Conduct the regression, here I refer to the <a href="#%20https://stats.stackexchange.com/questions/504209/understanding-the-deviance-and-pseudo-r2-from-a-glm">answer</a> to calculate pseudo-R2</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>survey_design <span class="ot">&lt;-</span> <span class="fu">svydesign</span>(<span class="at">id =</span> <span class="sc">~</span> CaseID, <span class="at">weight =</span> <span class="sc">~</span> weight_pop, <span class="at">data =</span> dat)</span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>residual_model<span class="ot">&lt;-</span><span class="fu">svyglm</span>(B3_binary <span class="sc">~</span> ND2 <span class="sc">+</span> B7_b <span class="sc">+</span> GH1 <span class="sc">+</span> ppeducat <span class="sc">+</span> race_5cat, <span class="at">design=</span>survey_design,<span class="at">family =</span> <span class="st">&quot;quasibinomial&quot;</span>)</span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>null_model <span class="ot">&lt;-</span> <span class="fu">svyglm</span>(B3_binary <span class="sc">~</span> <span class="dv">1</span>, <span class="at">design =</span> survey_design, <span class="at">family =</span> <span class="fu">binomial</span>())</span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a>pseudo_R2 <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="sc">-</span> (<span class="fu">deviance</span>(residual_model) <span class="sc">/</span> <span class="fu">deviance</span>(null_model))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>pseudo_R2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.08967482</code></pre>
+</div>
+</div>
 </section>
 </section>
 
