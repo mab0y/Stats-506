@@ -9,7 +9,7 @@ monthly_avg <- nnmaps %>%
   mutate(month = factor(month, levels = c("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")))
 
 ggplot(data = monthly_avg, aes(x = month, y = mean_temp, group = season, color = season)) +
-  geom_line(size = 1) +
+  geom_line(linewidth = 1) +
   geom_point(size = 2) +
   labs(title = "Mean Monthly Temperature",
        x = "Month",
@@ -25,16 +25,18 @@ monthly_avg_all <- nnmaps %>%
             mean_dewpoint = mean(dewpoint, na.rm = TRUE)) %>%
   mutate(month = factor(month, levels = c("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")))
 
+
 ggplot(data = monthly_avg_all, aes(x = month, group = season)) +
-  geom_line(aes(y = mean_temp, color = "Temperature(°C)"), size = 1) +
+  geom_line(aes(y = mean_temp, color = "Temperature(°C)", linetype = season), linewidth = 1) +
   geom_point(aes(y = mean_temp, color = "Temperature(°C)"), size = 2) +
-  geom_line(aes(y = mean_o3, color = "O3"), size = 1) +
+  geom_line(aes(y = mean_o3, color = "O3", linetype = season), linewidth = 1) +
   geom_point(aes(y = mean_o3, color = "O3"), size = 2) +
-  geom_line(aes(y = mean_pm10, color = "PM10"), size = 1) +
+  geom_line(aes(y = mean_pm10, color = "PM10", linetype = season), linewidth = 1) +
   geom_point(aes(y = mean_pm10, color = "PM10"), size = 2) +
-  geom_line(aes(y = mean_dewpoint, color = "Dewpoint"), size = 1) +
+  geom_line(aes(y = mean_dewpoint, color = "Dewpoint", linetype = season), linewidth = 1) +
   geom_point(aes(y = mean_dewpoint, color = "Dewpoint"), size = 2) +
-  labs(title = "Mean Monthly Temperature(°C), O3, PM10 and Dewpoint",
+  labs(title = "Mean Monthly Temperature(°C), O3, PM10, and Dewpoint by Season",
        x = "Month",
        y = "Mean Value",
-       color = "Variable")
+       color = "Variable",
+       linetype = "Season")
