@@ -38,4 +38,3 @@ ggplot(data = monthly_avg_all, aes(x = month, group = season)) +
        x = "Month",
        y = "Mean Value",
        color = "Variable")
-

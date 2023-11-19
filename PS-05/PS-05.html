@@ -3029,6 +3029,16 @@ vertical-align: -.125em;
   <li><a href="#a." id="toc-a." class="nav-link" data-scroll-target="#a.">a.</a></li>
   <li><a href="#b." id="toc-b." class="nav-link" data-scroll-target="#b.">b.</a></li>
   </ul></li>
+  <li><a href="#problem-2---oop-programming" id="toc-problem-2---oop-programming" class="nav-link" data-scroll-target="#problem-2---oop-programming">Problem 2 - OOP Programming</a>
+  <ul class="collapse">
+  <li><a href="#a.-1" id="toc-a.-1" class="nav-link" data-scroll-target="#a.-1">a.</a></li>
+  <li><a href="#b.-1" id="toc-b.-1" class="nav-link" data-scroll-target="#b.-1">b.</a></li>
+  </ul></li>
+  <li><a href="#problem-3---data.table" id="toc-problem-3---data.table" class="nav-link" data-scroll-target="#problem-3---data.table">Problem 3 - data.table</a>
+  <ul class="collapse">
+  <li><a href="#a.-2" id="toc-a.-2" class="nav-link" data-scroll-target="#a.-2">a.</a></li>
+  <li><a href="#b.-2" id="toc-b.-2" class="nav-link" data-scroll-target="#b.-2">b.</a></li>
+  </ul></li>
   </ul>
 </nav>
 </div>
@@ -3061,14 +3071,13 @@ vertical-align: -.125em;
 <p>I have provided hyperlinks to all pertinent resources and references that assisted me in addressing this problem.</p>
 <section id="problem-1---plotting" class="level2">
 <h2 class="anchored" data-anchor-id="problem-1---plotting">Problem 1 - Plotting</h2>
-<section id="a." class="level3">
-<h3 class="anchored" data-anchor-id="a.">a.</h3>
-<p>Import data and libraries</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>nnmaps <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">&quot;~/chicago-nmmaps.csv&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+<section id="a." class="level3">
+<h3 class="anchored" data-anchor-id="a.">a.</h3>
 <p>Calculate Celsius temperature and mean value, group it by month and season:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>nnmaps<span class="sc">$</span>celsius<span class="ot">&lt;-</span>(nnmaps<span class="sc">$</span>temp<span class="dv">-32</span>)<span class="sc">*</span><span class="dv">5</span><span class="sc">/</span><span class="dv">9</span></span>
@@ -3131,6 +3140,263 @@ vertical-align: -.125em;
 </div>
 </div>
 <p><code>PM10</code> seems to have the least seasonal trend.</p>
+</section>
+</section>
+<section id="problem-2---oop-programming" class="level2">
+<h2 class="anchored" data-anchor-id="problem-2---oop-programming">Problem 2 - OOP Programming</h2>
+<section id="a.-1" class="level3">
+<h3 class="anchored" data-anchor-id="a.-1">a.</h3>
+<p>Constructor:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">setClass</span>(<span class="st">&quot;poly&quot;</span>,</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>         <span class="at">slots =</span> <span class="fu">c</span>(</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>           <span class="at">coefficients =</span> <span class="st">&quot;numeric&quot;</span>,</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>           <span class="at">powers =</span> <span class="st">&quot;numeric&quot;</span>))</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>make_poly <span class="ot">&lt;-</span> <span class="cf">function</span>(coefficients, powers){</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="fu">new</span>(<span class="st">&quot;poly&quot;</span>, <span class="at">coefficients =</span> coefficients, <span class="at">powers =</span> powers))</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Validator (I referred to <a href="https://stat.ethz.ch/R-manual/R-devel/library/base/html/duplicated.html#:~:text=duplicated()%20determines%20which%20elements,elements%20(rows)%20are%20duplicates.">duplicated</a> ):</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">setValidity</span>(<span class="st">&quot;poly&quot;</span>, <span class="cf">function</span>(object){</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">length</span>(object<span class="sc">@</span>coefficients) <span class="sc">!=</span> <span class="fu">length</span>(object<span class="sc">@</span>powers)){</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">stop</span>(<span class="st">&quot;Lengths of coefficients and powers must be equal&quot;</span>)</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">any</span>(object<span class="sc">@</span>powers <span class="sc">&lt;</span> <span class="dv">0</span>)){</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">stop</span>(<span class="st">&quot;Powers must be non-negative integer&quot;</span>)</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">any</span>(<span class="fu">duplicated</span>(object<span class="sc">@</span>powers))) {</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">stop</span>(<span class="st">&quot;Powers cannot be duplicated&quot;</span>)</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">any</span>(object<span class="sc">@</span>powers <span class="sc">!=</span> <span class="fu">as.integer</span>(object<span class="sc">@</span>powers))) {</span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">stop</span>(<span class="st">&quot;Powers must be integers&quot;</span>)</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="cn">TRUE</span>)</span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><code>show</code> method:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">setMethod</span>(<span class="st">&quot;show&quot;</span>, <span class="st">&quot;poly&quot;</span>, <span class="cf">function</span>(object) {</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  non_zero_indices <span class="ot">&lt;-</span> <span class="fu">which</span>(object<span class="sc">@</span>coefficients <span class="sc">!=</span> <span class="dv">0</span>)</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  non_zero_coefficients <span class="ot">&lt;-</span> object<span class="sc">@</span>coefficients[non_zero_indices]</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  non_zero_powers <span class="ot">&lt;-</span> object<span class="sc">@</span>powers[non_zero_indices]</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>  terms <span class="ot">&lt;-</span> <span class="fu">paste0</span>(non_zero_coefficients, <span class="st">&quot;x^&quot;</span>, non_zero_powers)</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>  terms <span class="ot">&lt;-</span> <span class="fu">sub</span>(<span class="st">&quot;x</span><span class="sc">\\</span><span class="st">^0&quot;</span>, <span class="st">&quot;&quot;</span>, terms)</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>  terms <span class="ot">&lt;-</span> <span class="fu">sub</span>(<span class="st">&quot;1x&quot;</span>, <span class="st">&quot;x&quot;</span>, terms)</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>  terms <span class="ot">&lt;-</span> <span class="fu">paste</span>(terms, <span class="at">collapse =</span> <span class="st">&quot; + &quot;</span>)</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="fu">gsub</span>(<span class="st">&quot;</span><span class="sc">\\</span><span class="st">+ -&quot;</span>, <span class="st">&quot;- &quot;</span>, terms))</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Addition and substraction:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">setMethod</span>(<span class="st">&quot;+&quot;</span>, <span class="fu">c</span>(<span class="st">&quot;poly&quot;</span>, <span class="st">&quot;poly&quot;</span>), <span class="cf">function</span>(e1, e2) {</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  e1_list <span class="ot">&lt;-</span> <span class="fu">setNames</span>(e1<span class="sc">@</span>coefficients,<span class="fu">as.character</span>(e1<span class="sc">@</span>powers))</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  e2_list <span class="ot">&lt;-</span> <span class="fu">setNames</span>(e2<span class="sc">@</span>coefficients,<span class="fu">as.character</span>(e2<span class="sc">@</span>powers))</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  all_powers <span class="ot">&lt;-</span> <span class="fu">as.character</span>(<span class="fu">sort</span>(<span class="fu">unique</span>(<span class="fu">c</span>(e1<span class="sc">@</span>powers, e2<span class="sc">@</span>powers)), <span class="at">decreasing =</span> <span class="cn">TRUE</span>))</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>  combined_list <span class="ot">&lt;-</span> <span class="fu">setNames</span>(<span class="fu">numeric</span>(<span class="fu">length</span>(all_powers)), <span class="fu">as.character</span>(all_powers))</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (power <span class="cf">in</span> all_powers) {</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>    combined_list[power] <span class="ot">&lt;-</span> <span class="fu">sum</span>(e1_list[power], e2_list[power], <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="fu">make_poly</span>(combined_list, <span class="fu">as.integer</span>(<span class="fu">names</span>(combined_list))))</span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a><span class="fu">setMethod</span>(<span class="st">&quot;-&quot;</span>, <span class="fu">c</span>(<span class="st">&quot;poly&quot;</span>, <span class="st">&quot;poly&quot;</span>), <span class="cf">function</span>(e1, e2) {</span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>  e2<span class="sc">@</span>coefficients <span class="ot">&lt;-</span> <span class="sc">-</span>e2<span class="sc">@</span>coefficients</span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(e1 <span class="sc">+</span> e2)</span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="b.-1" class="level3">
+<h3 class="anchored" data-anchor-id="b.-1">b.</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>p1 <span class="ot">&lt;-</span> <span class="fu">make_poly</span>(<span class="fu">c</span>(<span class="dv">3</span>, <span class="dv">2</span>), <span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">0</span>))</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>p2 <span class="ot">&lt;-</span> <span class="fu">make_poly</span>(<span class="fu">c</span>(<span class="dv">7</span>, <span class="sc">-</span><span class="dv">2</span>, <span class="sc">-</span><span class="dv">1</span>, <span class="dv">17</span>), <span class="fu">c</span>(<span class="dv">3</span>, <span class="dv">2</span>, <span class="dv">1</span>, <span class="dv">0</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>p1</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>3x^2 + 2</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>p2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>7x^3 - 2x^2 - x^1 + 17</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>p1 <span class="sc">+</span> p2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>7x^3 + x^2 - x^1 + 19</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>p1 <span class="sc">-</span> p2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>-7x^3 + 5x^2 + x^1 - 15</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="problem-3---data.table" class="level2">
+<h2 class="anchored" data-anchor-id="problem-3---data.table">Problem 3 - data.table</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(nycflights13)</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(data.table)</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>flights <span class="ot">&lt;-</span> <span class="fu">as.data.table</span>(flights)</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>airports <span class="ot">&lt;-</span> <span class="fu">as.data.table</span>(airports)</span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>planes <span class="ot">&lt;-</span> <span class="fu">as.data.table</span>(planes)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<section id="a.-2" class="level3">
+<h3 class="anchored" data-anchor-id="a.-2">a.</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>departure <span class="ot">&lt;-</span> flights[, .(<span class="at">mean_delay =</span> <span class="fu">mean</span>(dep_delay, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>                     <span class="at">med_delay =</span> <span class="fu">median</span>(dep_delay, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>                     <span class="at">faa =</span> origin,</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>                     <span class="at">numflights =</span> .N),by <span class="ot">=</span> origin] <span class="sc">|&gt;</span></span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>                    _[numflights<span class="sc">&gt;</span><span class="dv">10</span>] <span class="sc">|&gt;</span> </span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>                    <span class="fu">merge</span>(<span class="at">x=</span>_, airports, <span class="at">by =</span> <span class="st">&#39;faa&#39;</span>, <span class="at">all.x=</span><span class="cn">TRUE</span>) <span class="sc">|&gt;</span></span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>                    _[<span class="fu">order</span>(<span class="sc">-</span>mean_delay)] <span class="sc">|&gt;</span></span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>                    _[, .(name, mean_delay, med_delay)] <span class="sc">|&gt;</span></span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>                    <span class="fu">print</span>(<span class="at">x=</span>_, <span class="at">n =</span> <span class="cn">Inf</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                  name mean_delay med_delay
+1: Newark Liberty Intl   15.10795        -1
+2: John F Kennedy Intl   12.11216        -1
+3:          La Guardia   10.34688        -3</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>arrival <span class="ot">&lt;-</span> flights[, .(<span class="at">mean_delay =</span> <span class="fu">mean</span>(arr_delay, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>                   <span class="at">med_delay =</span> <span class="fu">median</span>(arr_delay, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>                         <span class="at">faa =</span> dest,</span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>                         <span class="at">numflights =</span> .N),by <span class="ot">=</span> dest] <span class="sc">|&gt;</span></span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>                  _[numflights<span class="sc">&gt;</span><span class="dv">10</span>] <span class="sc">|&gt;</span> </span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>                  <span class="fu">merge</span>(<span class="at">x=</span>_, airports, <span class="at">by =</span> <span class="st">&#39;faa&#39;</span>, <span class="at">all.x=</span><span class="cn">TRUE</span>) <span class="sc">|&gt;</span></span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>                  _[<span class="fu">order</span>(<span class="sc">-</span>mean_delay)] <span class="sc">|&gt;</span></span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>                  _[, .(name, mean_delay, med_delay)] <span class="sc">|&gt;</span></span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a>                  <span class="fu">print</span>(<span class="at">x=</span>_, <span class="at">n =</span> <span class="cn">Inf</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                                     name   mean_delay med_delay
+  1:                Columbia Metropolitan  41.76415094      28.0
+  2:                           Tulsa Intl  33.65986395      14.0
+  3:                    Will Rogers World  30.61904762      16.0
+  4:                 Jackson Hole Airport  28.09523810      15.0
+  5:                        Mc Ghee Tyson  24.06920415       2.0
+  6:               Dane Co Rgnl Truax Fld  20.19604317       1.0
+  7:                        Richmond Intl  20.11125320       1.0
+  8:        Akron Canton Regional Airport  19.69833729       3.0
+  9:                      Des Moines Intl  19.00573614       0.0
+ 10:                   Gerald R Ford Intl  18.18956044       1.0
+ 11:                      Birmingham Intl  16.87732342      -2.0
+ 12:         Theodore Francis Green State  16.23463687       1.0
+ 13: Greenville-Spartanburg International  15.93544304      -0.5
+ 14:    Cincinnati Northern Kentucky Intl  15.36456376      -3.0
+ 15:            Savannah Hilton Head Intl  15.12950601      -1.0
+ 16:          Manchester Regional Airport  14.78755365      -3.0
+ 17:                          Eppley Afld  14.69889841      -2.0
+ 18:                               Yeager  14.67164179      -1.5
+ 19:                     Kansas City Intl  14.51405836       0.0
+ 20:                          Albany Intl  14.39712919      -4.0
+ 21:                General Mitchell Intl  14.16722038       0.0
+ 22:                       Piedmont Triad  14.11260054      -2.0
+ 23:               Washington Dulles Intl  13.86420212      -3.0
+ 24:               Cherry Capital Airport  12.96842105     -10.0
+ 25:              James M Cox Dayton Intl  12.68048606      -3.0
+ 26:     Louisville International Airport  12.66938406      -2.0
+ 27:                  Chicago Midway Intl  12.36422360      -1.0
+ 28:                      Sacramento Intl  12.10992908       4.0
+ 29:                    Jacksonville Intl  11.84483416      -2.0
+ 30:                       Nashville Intl  11.81245891      -2.0
+ 31:                Portland Intl Jetport  11.66040210      -4.0
+ 32:               Greater Rochester Intl  11.56064461      -5.0
+ 33:      Hartsfield Jackson Atlanta Intl  11.30011285      -1.0
+ 34:                Lambert St Louis Intl  11.07846451      -3.0
+ 35:                         Norfolk Intl  10.94909344      -4.0
+ 36:            Baltimore Washington Intl  10.72673385      -5.0
+ 37:                         Memphis Intl  10.64531435      -2.5
+ 38:                   Port Columbus Intl  10.60132291      -3.0
+ 39:                  Charleston Afb Intl  10.59296847      -4.0
+ 40:                    Philadelphia Intl  10.12719014      -3.0
+ 41:                  Raleigh Durham Intl  10.05238095      -3.0
+ 42:                    Indianapolis Intl   9.94043412      -3.0
+ 43:            Charlottesville-Albemarle   9.50000000      -5.0
+ 44:               Cleveland Hopkins Intl   9.18161129      -5.0
+ 45:        Ronald Reagan Washington Natl   9.06695204      -2.0
+ 46:                      Burlington Intl   8.95099602      -4.0
+ 47:                 Buffalo Niagara Intl   8.94595186      -5.0
+ 48:                Syracuse Hancock Intl   8.90392501      -5.0
+ 49:                          Denver Intl   8.60650021      -2.0
+ 50:                      Palm Beach Intl   8.56297210      -3.0
+ 51:                                 &lt;NA&gt;   8.24549550      -1.0
+ 52:                             Bob Hope   8.17567568      -3.0
+ 53:       Fort Lauderdale Hollywood Intl   8.08212154      -3.0
+ 54:                          Bangor Intl   8.02793296      -9.0
+ 55:           Asheville Regional Airport   8.00383142      -1.0
+ 56:                                 &lt;NA&gt;   7.87150838       0.0
+ 57:                      Pittsburgh Intl   7.68099053      -5.0
+ 58:                       Gallatin Field   7.60000000      -2.0
+ 59:                 NW Arkansas Regional   7.46572581      -2.0
+ 60:                           Tampa Intl   7.40852503      -4.0
+ 61:               Charlotte Douglas Intl   7.36031885      -3.0
+ 62:             Minneapolis St Paul Intl   7.27016886      -5.0
+ 63:                      William P Hobby   7.17618819      -4.0
+ 64:                         Bradley Intl   7.04854369     -10.0
+ 65:                     San Antonio Intl   6.94537178      -9.0
+ 66:     Louis Armstrong New Orleans Intl   6.49017497      -6.0
+ 67:                        Key West Intl   6.35294118       7.0
+ 68:                        Eagle Co Rgnl   6.30434783      -4.0
+ 69:                Austin Bergstrom Intl   6.01990875      -5.0
+ 70:                   Chicago Ohare Intl   5.87661475      -8.0
+ 71:                         Orlando Intl   5.45464309      -5.0
+ 72:               Detroit Metro Wayne Co   5.42996346      -7.0
+ 73:                        Portland Intl   5.14157973      -5.0
+ 74:                        Nantucket Mem   4.85227273      -3.0
+ 75:                      Wilmington Intl   4.63551402      -7.0
+ 76:                    Myrtle Beach Intl   4.60344828     -13.0
+ 77:    Albuquerque International Sunport   4.38188976      -5.5
+ 78:         George Bush Intercontinental   4.24079040      -5.0
+ 79:        Norman Y Mineta San Jose Intl   3.44817073      -7.0
+ 80:               Southwest Florida Intl   3.23814963      -5.0
+ 81:                       San Diego Intl   3.13916574      -5.0
+ 82:              Sarasota Bradenton Intl   3.08243131      -5.0
+ 83:            Metropolitan Oakland Intl   3.07766990      -9.0
+ 84:   General Edward Lawrence Logan Intl   2.91439222      -9.0
+ 85:                   San Francisco Intl   2.67289152      -8.0
+ 86:                                 &lt;NA&gt;   2.52052659      -6.0
+ 87:                         Yampa Valley   2.14285714       2.0
+ 88:              Phoenix Sky Harbor Intl   2.09704733      -6.0
+ 89:            Montrose Regional Airport   1.78571429     -10.5
+ 90:                     Los Angeles Intl   0.54711094      -7.0
+ 91:               Dallas Fort Worth Intl   0.32212685      -9.0
+ 92:                           Miami Intl   0.29905978      -9.0
+ 93:                       Mc Carran Intl   0.25772849      -8.0
+ 94:                  Salt Lake City Intl   0.17625459      -8.0
+ 95:                           Long Beach  -0.06202723     -10.0
+ 96:                Martha\\\\&#39;s Vineyard  -0.28571429     -11.0
+ 97:                  Seattle Tacoma Intl  -1.09909910     -11.0
+ 98:                        Honolulu Intl  -1.36519258      -7.0
+ 99:                                 &lt;NA&gt;  -3.83590734      -9.0
+100:            John Wayne Arpt Orange Co  -7.86822660     -11.0
+101:                    Palm Springs Intl -12.72222222     -13.5
+                                     name   mean_delay med_delay</code></pre>
+</div>
+</div>
+</section>
+<section id="b.-2" class="level3">
+<h3 class="anchored" data-anchor-id="b.-2">b.</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>average_speed <span class="ot">&lt;-</span> flights <span class="sc">|&gt;</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>                <span class="fu">merge</span>(<span class="at">x=</span>_, planes, <span class="at">by =</span> <span class="st">&quot;tailnum&quot;</span>) <span class="sc">|&gt;</span></span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>                _[, .(model, distance, <span class="at">time =</span> air_time<span class="sc">/</span><span class="dv">60</span>)] <span class="sc">|&gt;</span></span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>                _[, .(model, <span class="at">mph =</span> distance<span class="sc">/</span>time)] <span class="sc">|&gt;</span></span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>                _[, .(<span class="at">avgmph =</span> <span class="fu">mean</span>(mph, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>                 <span class="at">nflights =</span> .N), by <span class="ot">=</span> model] <span class="sc">|&gt;</span></span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>                _[<span class="fu">order</span>(<span class="sc">-</span>avgmph)] <span class="sc">|&gt;</span></span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a>                _[<span class="dv">1</span>] <span class="sc">|&gt;</span></span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a>                <span class="fu">print</span>(<span class="at">x=</span>_)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     model   avgmph nflights
+1: 777-222 482.6254        4</code></pre>
+</div>
+</div>
 </section>
 </section>
 
