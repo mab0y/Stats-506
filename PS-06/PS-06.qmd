@@ -21,7 +21,7 @@ library(tidyverse)
 library(future)
 library(parallel)
 
-n_bootstrap= 1000
+n_bootstrap= 2000
 
 # Parallel function
 calculate_means_parallel <- function(i) {
@@ -67,7 +67,7 @@ as.data.frame(calculate_se_and_ci(bind_rows(mean_results)))
 ```{r}
 #| warning: false
 futures <- system.time({
-  plan(multisession)
+  plan(multisession, workers = 4)
   mean_results <- list()
   for (i in 1:n_bootstrap) {
     mean_results[[i]] <- future(calculate_means_parallel())
@@ -93,7 +93,7 @@ as.data.frame(calculate_se_and_ci(bind_rows(mean_results)))
 ```
 
 ## Performance
-Futures is slightly faster than non-parallel method and socket is much more faster:
+Futures runs much more faster than non-parallel method and socket runs even more faster:
 ```{r}
 rbind(non_parallel, futures, socket)
 ```

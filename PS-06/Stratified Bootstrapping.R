@@ -3,7 +3,7 @@ library(tidyverse)
 library(future)
 library(parallel)
 
-n_bootstrap = 100
+n_bootstrap = 1000
 
 # https://stackoverflow.com/questions/31534531/generate-stratified-bootstrap-resamples-in-r
 calculate_means_parallel <- function(i) {
@@ -44,7 +44,7 @@ as.data.frame(calculate_se_and_ci(bind_rows(mean_results)))
 
 # future
 futures <- system.time({
-  plan(multisession)
+  plan(multisession, workers = 4)
   mean_results <- list()
   for (i in 1:n_bootstrap) {
     mean_results[[i]] <- future(calculate_means_parallel())

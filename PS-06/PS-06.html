@@ -3061,13 +3061,14 @@ vertical-align: -.125em;
 <p>I have provided hyperlinks to all pertinent resources and references that assisted me in addressing this problem.</p>
 <section id="preparation" class="level2">
 <h2 class="anchored" data-anchor-id="preparation">Preparation</h2>
+<p>I referred to <a href="https://stackoverflow.com/questions/31534531/generate-stratified-bootstrap-resamples-in-r">generate stratified bootstrap resamples in R</a> to help me do the stratified bootstrapping:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(nycflights13)</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(future)</span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(parallel)</span>
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>n_bootstrap<span class="ot">=</span> <span class="dv">1000</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>n_bootstrap<span class="ot">=</span> <span class="dv">2000</span></span>
 <span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Parallel function</span></span>
 <span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>calculate_means_parallel <span class="ot">&lt;-</span> <span class="cf">function</span>(i) {</span>
@@ -3110,9 +3111,9 @@ vertical-align: -.125em;
 <span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="fu">as.data.frame</span>(<span class="fu">calculate_se_and_ci</span>(<span class="fu">bind_rows</span>(mean_results)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>  origin     mean          se ci_lower ci_upper
-1    EWR 153.2896 0.006720995 153.2764 153.3028
-2    JFK 178.3497 0.007383288 178.3352 178.3642
-3    LGA 117.8316 0.003868824 117.8240 117.8391</code></pre>
+1    EWR 153.2939 0.004765012 153.2846 153.3033
+2    JFK 178.3541 0.005201166 178.3439 178.3643
+3    LGA 117.8246 0.002645352 117.8194 117.8298</code></pre>
 </div>
 </div>
 </section>
@@ -3120,7 +3121,7 @@ vertical-align: -.125em;
 <h2 class="anchored" data-anchor-id="future">Future</h2>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>futures <span class="ot">&lt;-</span> <span class="fu">system.time</span>({</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">plan</span>(multisession)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">plan</span>(multisession, <span class="at">workers =</span> <span class="dv">4</span>)</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  mean_results <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
 <span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>n_bootstrap) {</span>
 <span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    mean_results[[i]] <span class="ot">&lt;-</span> <span class="fu">future</span>(<span class="fu">calculate_means_parallel</span>())</span>
@@ -3131,9 +3132,9 @@ vertical-align: -.125em;
 <span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="fu">as.data.frame</span>(<span class="fu">calculate_se_and_ci</span>(<span class="fu">bind_rows</span>(mean_results)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>  origin     mean          se ci_lower ci_upper
-1    EWR 153.2864 0.006530580 153.2736 153.2992
-2    JFK 178.3487 0.007051101 178.3348 178.3625
-3    LGA 117.8321 0.003856922 117.8245 117.8397</code></pre>
+1    EWR 153.2978 0.004655477 153.2887 153.3070
+2    JFK 178.3483 0.005156431 178.3382 178.3584
+3    LGA 117.8256 0.002662880 117.8204 117.8308</code></pre>
 </div>
 </div>
 </section>
@@ -3152,21 +3153,22 @@ vertical-align: -.125em;
 <span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a><span class="fu">as.data.frame</span>(<span class="fu">calculate_se_and_ci</span>(<span class="fu">bind_rows</span>(mean_results)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>  origin     mean          se ci_lower ci_upper
-1    EWR 153.2974 0.006609040 153.2844 153.3103
-2    JFK 178.3462 0.007128358 178.3322 178.3602
-3    LGA 117.8293 0.003839992 117.8218 117.8368</code></pre>
+1    EWR 153.3062 0.004667653 153.2970 153.3153
+2    JFK 178.3418 0.005066319 178.3319 178.3518
+3    LGA 117.8243 0.002708647 117.8190 117.8296</code></pre>
 </div>
 </div>
 </section>
 <section id="performance" class="level2">
 <h2 class="anchored" data-anchor-id="performance">Performance</h2>
+<p>Futures runs much more faster than non-parallel method and socket runs even more faster:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">rbind</span>(non_parallel, futures, socket)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>             user.self sys.self elapsed user.child sys.child
-non_parallel     76.20     6.43  100.75         NA        NA
-futures          51.71     0.54   92.88         NA        NA
-socket            0.01     0.02   38.16         NA        NA</code></pre>
+non_parallel    170.54    12.61  206.20         NA        NA
+futures          23.75     0.30   98.94         NA        NA
+socket            0.04     0.03   62.00         NA        NA</code></pre>
 </div>
 </div>
 </section>
